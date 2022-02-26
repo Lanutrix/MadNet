@@ -1,4 +1,4 @@
-import main.scr as scr
+import scr
 import config
 PPP=4
 def pc_prov(pc):

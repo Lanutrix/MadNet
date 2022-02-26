@@ -1,7 +1,7 @@
 import telebot
 import config
-import main.scr as scr
-import main.pc as pc
+import scr
+import pc
 
 bot=telebot.TeleBot(config.TOKEN_PC[pc.PPP][1])
 
@@ -16,4 +16,16 @@ def infokigb(message):
 	if gop!=0:
 		bot.send_message(message.chat.id,gop)
 
+@bot.message_handler(content_types=['document'])
+def handle_file(message):
+    try:
+        chat_id = message.chat.id
+        file_info = bot.get_file(message.document.file_id)
+        downloaded_file = bot.download_file(file_info.file_path)
+        src = 'media/' + message.document.file_name;
+        with open(src, 'wb') as new_file:
+            new_file.write(downloaded_file)
+        bot.reply_to(message, "🖥✅")
+    except Exception as e:
+        bot.reply_to(message, f"🖥❌\n{e}")
 bot.polling(none_stop=True)
