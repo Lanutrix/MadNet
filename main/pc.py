@@ -5,7 +5,7 @@ def pc_prov(pc):
 	stroka=''
 	try:
 		for i in range(len(pc)):
-			if pc[i]=='<':
+			if pc[i]=='{':
 				stroka+=pc[i:]
 				break
 			elif pc[i]!=' ':
@@ -18,7 +18,7 @@ def pc_prov(pc):
 				commj=stroka[i+1:]
 				break
 		print([l],[commj])
-		if l==config.TOKEN_PC[PPP][0] or l=="pc999":
+		if l.lower()==config.TOKEN_PC[PPP][0] or l=="pc999":
 			kop=scr.com_bot(commj)
 			return kop
 		else:

@@ -1,2 +1,0 @@
-pip install pyTelegramBotAPI
-pip install wget

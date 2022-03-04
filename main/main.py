@@ -50,4 +50,10 @@ def handle_file(message):
         bot.reply_to(message, "🖥✅")
     except Exception as e:
         bot.reply_to(message, f"🖥❌\n{e}")
+
+def screen(img):
+    with open("media/"+img, "rb") as file:
+        bot.send_photo()
+
+
 bot.polling(none_stop=True)

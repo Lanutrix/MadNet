@@ -1,5 +1,4 @@
-import subprocess, os
-import re
+import subprocess, os, re, time
 import wget as wg
 
 opa_pc=0
@@ -51,13 +50,13 @@ def wget(link,save):
 		return '🖥✅'
 	except: return '🖥❌🗡'
 def comm(text):
-	comi4=re.findall(r'<([^<>]+)>', text)
+	comi4=re.findall(r'{([^<>]+)}', text)
 	try:
 		return comi4, True
 	except:
 		return None, False
 
-def del_exit(lpli):
+def del_exit():
 	dir=os.listdir("media/")
 	for i in dir:
 		os.remove("media/"+i)
@@ -77,11 +76,14 @@ def com_bot(kl):
 			res=pict(inp[0])
 		elif kl.lower()[:4]=='vide' and i:
 			res=video(inp[0])
-		elif kl.lower()[:4]=='exit' and i:
-			res=del_exit(inp[0])
+		elif kl.lower()[:4]=='exit':
+			res=del_exit()
+			
 		return res
 
 
 	except: return res
 # print(del_exit("kkd"))
 # print(cmdo("dir"))
+while 1:
+	print(com_bot(input()))

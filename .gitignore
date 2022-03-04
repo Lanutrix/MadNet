@@ -10,6 +10,11 @@ config.py
 *jpeg
 *mp4
 *mp3
+/bot1/
+/bot3/
+*.build/
+*.dist/
+*.onefile-build/
 # C extensions
 *.so
 
