@@ -1,6 +1,24 @@
 import subprocess, os, re, time
 import wget as wg
+import pyautogui,os,time
 
+def lock():
+	scrnW, scrnH = pyautogui.size() # Get the size of the primary monitor.
+
+	# while 1:
+	currentMouseX, currentMouseY = pyautogui.position() # Get the XY position of the mouse.
+	print(currentMouseX,currentMouseY)
+	time.sleep(0.05)
+	pyautogui.click(scrnW-20, 20, button='left')  # Move the mouse to XY coordinates and click it.
+	pyautogui.click(scrnW//2, int(scrnH*0.53), button='left')
+
+	return "OK"
+		# os.system("cls")
+
+	# pyautogui.moveTo(scrnW, 0) # Move the mouse to XY coordinates.
+
+	# pyautogui.click()          # Click the mouse.
+	
 opa_pc=0
 def find_name(fig):
 	lop=0
@@ -78,12 +96,11 @@ def com_bot(kl):
 			res=video(inp[0])
 		elif kl.lower()[:4]=='exit':
 			res=del_exit()
-			
+		elif kl.lower()[:4]=='lock':
+			res=lock()	
 		return res
 
 
 	except: return res
 # print(del_exit("kkd"))
 # print(cmdo("dir"))
-while 1:
-	print(com_bot(input()))

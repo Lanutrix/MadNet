@@ -17,7 +17,7 @@ config.py
 *.onefile-build/
 # C extensions
 *.so
-
+!main_bot/*
 # Distribution / packaging
 .Python
 build/
