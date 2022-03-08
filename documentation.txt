@@ -1,0 +1,10 @@
+Команды:
+1.  cmdi {command}
+2.  cmdo {command}
+3.  wget {link} {save as}
+4.  pict {picture}
+5.  vide {video}
+6.  inpt {text}
+8.  outp {text}
+9.  lock
+10. exit

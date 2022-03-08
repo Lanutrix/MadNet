@@ -1,21 +1,30 @@
+# -*- coding: utf8 -*-
 import scr
 import pc
 import telebot
 import config
-import sys
+import  os, time
+import pyautogui
+# print(pc.pc_prov(input()))
 
 bot=telebot.TeleBot(config.TOKEN_PC[pc.PPP][1])
 
 @bot.message_handler(commands=['info'])
 def start_message(message):
-	bot.send_message(message.chat.id,"Список функций и их использование:\n1. Выполнить команду, на её вывод всё-равно: cmdi: <команда>\n2. Выполнить команду и вернуть её вывод в телеграмм: cmdo: <команда>\n3. Сохранить фото, аудио или видео на ПК: просто отправить этот файл\n4. Скачать файл из интернета: wget <ссылка>\n\nКоманты и ссылки обязателно надо писать в <>")	
-	
-	
+	bot.send_message(message.chat.id, f"Список функций: \n{config.inform}")	
+
 @bot.message_handler(content_types=['text'])
 def infokigb(message):
     gop=pc.pc_prov(message.text)
-    if gop!=0 and gop!="kill":
-        bot.send_message(message.chat.id,gop)
+    if gop[-3:]=="jpg":
+        img = open(gop, "rb")
+        bot.send_photo(message.chat.id, img)
+        img.close()
+        os.remove(f"{os.getcwd()}/{gop}")
+           
+    elif gop!=0 and gop!="kill":
+        bot.send_message(message.chat.id,gop)  
+
 @bot.message_handler(content_types=['photo'])
 def handle_docs_document(message):
     file_info = bot.get_file(message.photo[len(message.photo) - 1].file_id)
@@ -26,6 +35,7 @@ def handle_docs_document(message):
     picu=scr.ren(message.photo[1].file_id, "pic")
     print(str(message.chat.id))
     bot.reply_to(message, f"OK. Сохранил как {picu}\n")
+
 
 @bot.message_handler(content_types=['video'])
 def get_file(message):
@@ -44,7 +54,7 @@ def handle_file(message):
         chat_id = message.chat.id
         file_info = bot.get_file(message.document.file_id)
         downloaded_file = bot.download_file(file_info.file_path)
-        src = 'media/' + message.document.file_name;
+        src = 'media/' + message.document.file_name
         with open(src, 'wb') as new_file:
             new_file.write(downloaded_file)
         bot.reply_to(message, "🖥✅")
@@ -56,4 +66,5 @@ def screen(img):
         bot.send_photo()
 
 
-bot.polling(none_stop=True)
+
+bot.infinity_polling()

