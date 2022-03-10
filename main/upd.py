@@ -23,7 +23,7 @@ def main():
             listvers.write("2.1")
 
     if versia[:5]==versiam:
-        return 1, "0.1.0"
+        return 1, "0.0.0"
     else:
         return 0, versia[:5]
 

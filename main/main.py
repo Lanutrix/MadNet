@@ -9,6 +9,8 @@ import pyautogui
 
 bot=telebot.TeleBot(config.TOKEN_PC[pc.PPP][1])
 
+bot.send_message(config.id_api, f"pc{config.NUM_PC} ONLINE!")	
+
 @bot.message_handler(commands=['info'])
 def start_message(message):
 	bot.send_message(message.chat.id, f"Список функций: \n{config.inform}")	

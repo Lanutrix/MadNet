@@ -1,7 +1,7 @@
 # -*- coding: utf8 -*-
 import scr
 import config
-PPP=1
+PPP = config.NUM_PC
 def pc_prov(pc):
 	stroka=''
 	if 1:

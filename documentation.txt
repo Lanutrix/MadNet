@@ -7,4 +7,6 @@
 6.  inpt {text}
 8.  outp {text}
 9.  lock
-10. exit
+10. keyd {text}
+11. strt {name_file}
+12. exit
