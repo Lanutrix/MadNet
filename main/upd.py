@@ -1,8 +1,8 @@
 # -*- coding: utf8 -*-
 import os, wget
-from pc import PPP
+
 p=os.getcwd()
-ipo=PPP
+
 def main():
     while 1:
 
@@ -43,5 +43,6 @@ while 1:
             vers= open(p+"/vers/vers.txt", "w")
             vers.write(kakai_versia)
             vers.close()
+            os.remove(p+"/vers/version.txt")
     else:
         print(0)

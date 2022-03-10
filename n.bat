@@ -1,1 +1,0 @@
-D:\BackDoorBot\upd.exe
