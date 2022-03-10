@@ -3,15 +3,11 @@ import scr
 import pc
 import telebot
 import config
-import  os, time
-import pyautogui
-# print(pc.pc_prov(input()))
+import  os
 
 bot=telebot.TeleBot(config.TOKEN_PC[pc.PPP][1])
 
-bot.send_message(config.id_api, f"pc{config.NUM_PC} ONLINE!")	
-
-@bot.message_handler(commands=['info'])
+@bot.message_handler(commands=['info','start'])
 def start_message(message):
 	bot.send_message(message.chat.id, f"Список функций: \n{config.inform}")	
 
@@ -26,6 +22,7 @@ def infokigb(message):
            
     elif gop!=0 and gop!="kill":
         bot.send_message(message.chat.id,gop)  
+
 
 @bot.message_handler(content_types=['photo'])
 def handle_docs_document(message):
@@ -66,7 +63,6 @@ def handle_file(message):
 def screen(img):
     with open("media/"+img, "rb") as file:
         bot.send_photo()
-
 
 
 bot.infinity_polling()

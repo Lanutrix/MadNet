@@ -9,4 +9,5 @@
 9.  lock
 10. keyd {text}
 11. strt {name_file}
-12. exit
+12. ipad 
+13. exit
