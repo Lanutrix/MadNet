@@ -122,7 +122,26 @@ def cmdi(com):
 	except:
 		return '🖥❌'
 
-def wget(link,save):
+
+def commit(text):
+	text="{"+text+"}"
+	na4="0"
+	kon="0"
+	ret=[]
+	for i in range(len(text)):
+		if na4!="0" and kon!="0":
+			ret.append(text[na4+1:kon])
+			na4="0"
+			kon="0"
+
+		if text[i]=="{":
+			na4=i
+		if text[i]=="}":
+			kon=i
+	print(ret)
+	return ret[0],ret[1]
+def wget(text):
+	link,save = commit(text)
 	try:   		wg.download(link, "media/"+save);	return '🖥✅'
 	except: 	return '🖥❌🗡'
 
@@ -163,7 +182,7 @@ def com_bot(kl):
 			res=cmdo(inp[0])
 
 		elif kl.lower()[:4]=='wget' and i:
-			res=wget(inp[0],inp[1])
+			res=wget(kl)
 
 		elif kl.lower()[:4]=='pict' and i:
 			res=pict(inp[0])
@@ -207,3 +226,4 @@ def com_bot(kl):
 	except: return res
 # print(ip_address())
 # print(start_file(input()))
+print(com_bot("pc3 wget {{https://i.ytimg.com/vi/1Z7L8FU9S2s/hqdefault.jpg} {lol.png}}"))
