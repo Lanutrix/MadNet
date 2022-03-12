@@ -1,18 +1,14 @@
 # -*- coding: utf8 -*-
 import os, wget
-
 p=os.getcwd()
-
 def main():
     while 1:
-
         try:
             file = open(p+"/vers/version.txt", "r")
             versia=file.read().split("\n")[-1]
             break
         except:
             wget.download("https://raw.githubusercontent.com/DmodvGH/BackDoorBot/main/version.txt", p+"/vers/version.txt")
-
     while 1:
         try:
             listvers = open(p+"/vers/vers.txt", "r")
@@ -26,7 +22,6 @@ def main():
         return 1, "0.0.0"
     else:
         return 0, versia[:5]
-
 while 1:
     if 1:
         klop, kakai_versia=main()
@@ -43,5 +38,4 @@ while 1:
             vers.write(kakai_versia)
             vers.close()
             os.remove(p+"/vers/version.txt")
-    else:
-        pass
+    else:   pass

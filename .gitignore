@@ -5,8 +5,9 @@ __pycache__/
 token.txt
 tokeni.txt
 *exe
-config.py
+# config.py
 *png
+!img/*
 *jpg
 *jpeg
 *mp4

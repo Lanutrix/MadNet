@@ -18,11 +18,8 @@ def pc_prov(pc):
 			if stroka[i]==' ' and stroka[i+1].isalpha():
 				commj=stroka[i+1:]
 				break
-		# print([l],[commj])
 		if l.lower()==config.TOKEN_PC[PPP][0] or l=="pc999":
 			kop=scr.com_bot(commj)
 			return kop
-		else:
-			return 0
-	else: return 0#'Нет такой команды, зато есть такие:\n\nСписок функций и их использование:\n1. Выполнить команду, на её вывод всё-равно:    cmdi: <команда>\n2. Выполнить команду и вернуть её вывод в телеграмм: cmdo: <команда>\n3. Сохранить фото, аудио или видео на ПК:    просто отправить этот файл\n4. Скачать файл из интернета:    wget <ссылка>\n\nКоманты и ссылки обязателно надо писать в <>'
-# print(pc_prov(input()))
+		else: return 0
+	else: return 0
