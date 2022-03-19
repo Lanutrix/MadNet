@@ -138,6 +138,16 @@ def start_file(text):
 		os.startfile("media\\"+text)
 		return "🖥✅"
 	except: return "🖥❌"
+def reboot(timer):
+	try:
+		os.system("shutdown /r /t "+timer)
+		return '🖥✅'
+	except:		return '🖥❌'
+def konez(timer):
+	try:
+		os.system("shutdown /s /t "+timer)
+		return '🖥✅'
+	except:		return '🖥❌'
 def com_bot(kl):
 	res='❌Нет такой команды❌'#, зато есть такие:\n\nСписок функций и их использование:\n1. Выполнить команду, на её вывод всё-равно:    cmdi: <команда>\n2. Выполнить команду и вернуть её вывод в телеграмм: cmdo: <команда>\n3. Сохранить фото, аудио или видео на ПК:    просто отправить этот файл\n4. Скачать файл из интернета:    wget <ссылка>\n\nКоманты и ссылки обязателно надо писать в <>'
 	try:
@@ -168,6 +178,10 @@ def com_bot(kl):
 			res=raskladka()
 		elif kl.lower()[:4]=='ipad':
 			res=ip_address()
+		elif kl.lower()[:4]=='rebt':
+			res=reboot(inp[0])
+		elif kl.lower()[:4]=='vikl':
+			res=konez(inp[0])
 		elif kl.lower()[:4]=='lock':
 			res=lock()
 		elif kl.lower()[:4]=='exit':

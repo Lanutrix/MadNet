@@ -8,6 +8,7 @@ tokeni.txt
 # config.py
 *png
 !img/*
+.vscode
 *jpg
 *jpeg
 *mp4
