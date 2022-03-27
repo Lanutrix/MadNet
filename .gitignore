@@ -8,6 +8,7 @@ tokeni.txt
 # config.py
 *png
 !img/*
+!bot/token.txt
 .vscode
 *jpg
 *jpeg
