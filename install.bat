@@ -1,11 +1,4 @@
 pip install --upgrade pip
-pip install pyTelegramBotAPI
-pip install wget
-pip install keyboard
-pip install requests
-
-pip install PyAutoGUI
+pip install --upgrade pyTelegramBotAPI
+pip install --upgrade requests wget pyautogui keyboard
 pip install --upgrade Pillow
-
-
-pip install auto-py-to-exe
