@@ -8,6 +8,7 @@ import telebot
 class Stirring():
     def __init__(self) -> None:
         self.n = 0
+        self.white = []
 
     def save(self):
         while 1:
@@ -26,13 +27,13 @@ class Stirring():
                     with open("config.json", 'w', encoding='utf-8') as f:
                         json.dump(outp, f)
                         
-                    exit()
+                    self.bot.stop_polling()
             else:
               sleep(5)  
     def get_name(self):
         while True:
             name = pag.prompt("Укажите имя", "BDB")
-            if name != None:
+            if name == None:
                 exit()
             if name != '':
                 self.name = name
@@ -40,7 +41,7 @@ class Stirring():
     def get_token(self):
         while True:
             self.token = pag.prompt("Укажите токен", "BDB")
-            if self.token != None:
+            if self.token == None:
                 exit()
             elif self.token != '':                
                 link = f"https://api.telegram.org/bot{self.token}/getMe"
@@ -54,7 +55,7 @@ class Stirring():
             else:
                     pag.alert("Вы указали неверный токен")
     def Run(self):
-        self.white = []
+        
         @self.bot.message_handler(commands=['start'])
         def start_message(message):
             if message.chat.type == 'private':
