@@ -32,14 +32,17 @@ class Stirring():
     def get_name(self):
         while True:
             name = pag.prompt("Укажите имя", "BDB")
-            if name != '' and name != None:
+            if name != None:
+                exit()
+            if name != '':
                 self.name = name
                 break
     def get_token(self):
         while True:
             self.token = pag.prompt("Укажите токен", "BDB")
-            if self.token != '' and self.token != None:
-                
+            if self.token != None:
+                exit()
+            elif self.token != '':                
                 link = f"https://api.telegram.org/bot{self.token}/getMe"
                 d = requests.get(link).json()
                 if d['ok']:
