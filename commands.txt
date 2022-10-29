@@ -20,4 +20,3 @@ pc0 close
 pc0 kill
 pc0 reboot
 pc0 shotdown
-pc0 upd

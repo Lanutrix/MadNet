@@ -5,6 +5,8 @@ __pycache__/
 token.txt
 tokeni.txt
 *exe
+output/*
+config.json
 # config.py
 *png
 !img/*
