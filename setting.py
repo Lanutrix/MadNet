@@ -12,7 +12,6 @@ class Stirring():
 
     def save(self):
         while 1:
-            
             if self.white != []:
                 id = pag.confirm(f"Сохранить?", "BDB")
                 if id == 'OK':
@@ -30,6 +29,7 @@ class Stirring():
                     self.bot.stop_polling()
             else:
               sleep(5)  
+
     def get_name(self):
         while True:
             name = pag.prompt("Укажите имя", "BDB")
@@ -38,6 +38,7 @@ class Stirring():
             if name != '':
                 self.name = name
                 break
+
     def get_token(self):
         while True:
             self.token = pag.prompt("Укажите токен", "BDB")
@@ -54,8 +55,8 @@ class Stirring():
                     pag.alert("Вы указали неверный токен")
             else:
                     pag.alert("Вы указали неверный токен")
+
     def Run(self):
-        
         @self.bot.message_handler(commands=['start'])
         def start_message(message):
             if message.chat.type == 'private':
@@ -80,6 +81,7 @@ class Stirring():
 
 
 st = Stirring()
+
 st.get_name()
 st.get_token()
 threading.Thread(target=st.save, args=()).start()
