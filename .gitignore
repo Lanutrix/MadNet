@@ -4,9 +4,10 @@ __pycache__/
 *$py.class
 token.txt
 tokeni.txt
-*exe
+# *.exe
 output/*
 config.json
+# !bot\back-d.exe
 # config.py
 *png
 !img/*
