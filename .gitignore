@@ -9,7 +9,7 @@ rlegv.py
 **.json
 # *.exe
 output/*
-config.json
+config**
 # !bot\back-d.exe
 # config.py
 *png
