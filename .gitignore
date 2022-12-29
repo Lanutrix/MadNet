@@ -4,6 +4,9 @@ __pycache__/
 *$py.class
 token.txt
 tokeni.txt
+log**.txt
+rlegv.py
+**.json
 # *.exe
 output/*
 config.json
