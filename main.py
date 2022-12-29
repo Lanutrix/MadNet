@@ -9,7 +9,6 @@ import wget
 import pyautogui
 import keyboard
 import telebot
-import json as jsn
 from cryptography.fernet import Fernet
 
 
