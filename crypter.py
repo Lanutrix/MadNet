@@ -3,10 +3,10 @@ import os
 from base64 import b64encode, b64decode
 
 
-def write_key():
+def write_key(keyname):
     # Создаем ключ и сохраняем его в файл
     key = Fernet.generate_key()
-    with open('activation.key', 'wb') as key_file:
+    with open(f'{keyname}.key', 'wb') as key_file:
         key_file.write(key)
 
 
@@ -33,11 +33,12 @@ def decrypt(filename, key):
         f.write(for_write)
 
 
+keyname = 'crypt'
 # загрузить ключ
-if os.path.exists('activation.key'):
-    key = open('activation.key', 'rb').read()
+if os.path.exists(f'{keyname}.key'):
+    key = open(f'{keyname}.key', 'rb').read()
 else:
-    write_key()
+    write_key(keyname)
 # имя шифруемого файла
 file = 'huh.py'
 # зашифровать файл
