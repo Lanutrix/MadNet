@@ -48,9 +48,14 @@ class Data:
 
 class Logger_Bot:
     def __init__(self) -> None:
-        self.dump = 'dump\\'
-        self.path = 'logs\\'
+        self.hh = '/storage/emulated/0/Git/'
+        self.dump = '/storage/emulated/0/Git/dump/'
+        self.path = '/storage/emulated/0/Git/logs/'
         day = 3
+        if not os.path.exists(self.dump):
+        	os.mkdir(self.dump)
+        if not os.path.exists(self.path):
+        	os.mkdir(self.path)
         current, dirs, files = os.walk(self.path).__next__()
         if len(files) >= day:
             files = sorted(files)[:-3]
@@ -86,6 +91,7 @@ class Logger_Bot:
                 file.write(key[:22] + f.encrypt(encrypted_text) + key[-22:])
 
             self.__save_log('&#Logs&#')
+            self.__save_log(text)
 
     def log(self, name_func, e_text):
         time_e = datetime.now().strftime('%H:%M:%S').replace(' ', '_').replace(':', '-')
@@ -94,20 +100,19 @@ class Logger_Bot:
 
     def get_log(self, name_file):
         try:
-            with open(name_file, 'rb') as file:
+            with open(self.path + name_file, 'rb') as file:
                 data2 = file.read()
             key = data2[:22] + data2[-22:]  # чтение ключа
             f = Fernet(key)
-            fl = name_file.split('\\')[1]
-            print(fl)
-            with open(name_file, 'rb') as file:
+            
+            with open(self.path + name_file, 'rb') as file:
                 data3 = file.read()[22:-22]
 
             data3 = f.decrypt(data3).decode().replace("&#", "\n")
 
-            with open(self.dump+'\\'+fl, 'w') as file:
+            with open(self.dump+name_file, 'w') as file:
                 file.write(data3)
-            return True
+            return self.dump+name_file
 
         except:
             return False
@@ -285,13 +290,13 @@ class Func_API:
             logger.log(self.rebooting.__name__, e)
             bot.send_message(self.id, f'Ошибка: {e}')
 
-    def shotdowning(self, timer):  # выключение пк
+    def shutdowning(self, timer):  # выключение пк
         try:
             timer = "shutdown /s /t " + str(timer)
             os.system(timer)
             bot.send_message(self.id, "Успешно")
         except Exception as e:
-            logger.log(self.shotdowning.__name__, e)
+            logger.log(self.shutdowning.__name__, e)
             bot.send_message(self.id, f'Ошибка: {e}')
 
     def picture(self, file):  # открытие картинки из папки с медиа
@@ -525,7 +530,19 @@ sh.Run "{pth}\\upd.bat", 0'''  # текст для скрипта обновы
             ctypes.c_uint(6),
             ctypes.byref(ctypes.c_uint())
         )
-
+	def loggs(self, dat):
+		namer = f'log_{dat}.txt'
+		answer = logger.get_log(namer)
+		try:
+			if answer:
+				f = open(answer,'rb')
+				bot.send_document(self.id, f)
+				f.close()
+				os.remove(answer)
+		except Exception as e:
+			logger.log(self.loggs.__name__, e)
+ 	       bot.send_message(self.id, f'Ошибка: {e}')
+		
     def perfor(self, text, id_chat):  # главный обработчик
         try:
             self.id = id_chat
@@ -548,7 +565,7 @@ sh.Run "{pth}\\upd.bat", 0'''  # текст для скрипта обновы
                     self.specifications()
 
                 if comnd == "shotdown" or comnd == "shdn" or comnd == "vikl":
-                    self.shotdowning(text_comand[0])
+                    self.shutdowning(text_comand[0])
 
                 if comnd == "picture" or comnd == "pict":
                     self.picture(text_comand[0])
@@ -576,7 +593,8 @@ sh.Run "{pth}\\upd.bat", 0'''  # текст для скрипта обновы
 
                 if comnd == "dir" or comnd == "direction":
                     self.direct(text_comand[0])
-
+				if comnd == "log":
+                    self.loggs(text_comand[0])
                 if comnd == "screenshot" or comnd == "scrn":
                     self.screenshot()
 
