@@ -48,9 +48,9 @@ class Data:
 
 class Logger_Bot:
     def __init__(self) -> None:
-        self.hh = '/storage/emulated/0/Git/'
-        self.dump = '/storage/emulated/0/Git/dump/'
-        self.path = '/storage/emulated/0/Git/logs/'
+        self.hh = ''
+        self.dump = 'dump/'
+        self.path = 'logs/'
         day = 3
         if not os.path.exists(self.dump):
             os.mkdir(self.dump)
