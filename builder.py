@@ -1,4 +1,5 @@
-import base64, os
+import base64
+import os
 
 path = 'main.py'
 
@@ -7,11 +8,14 @@ def crypt(path):
     try:
         with open(path, 'rb') as t:
             text = t.read()
-        
-        text1 = text.decode('utf8').split('\r\n\r\n\r\n')[0].replace('\n','')
 
+        text1 = text.decode('utf8').split('\r\n\r\n\r\n')[0].replace('\n', '')
+        try:
+            exec(text1)
+        except Exception as e:
+            print(e)
+            exit()
         de = base64.b85encode(text)
-
 
         code = f"""{text1}
 from base64 import b85decode
