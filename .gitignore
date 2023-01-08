@@ -7,6 +7,8 @@ tokeni.txt
 log**.txt
 rlegv.py
 **.json
+!build.json
+cr.main.py
 # *.exe
 output/*
 config**
