@@ -32,3 +32,13 @@ exec(source)
 
 if crypt('main.py'):
     os.system('auto-py-to-exe.exe --config "build.json"')
+
+    if os.path.exists('output\\cr.main.exe'):
+        if os.path.exists('bot\\madnet.exe'):
+            os.remove('bot\\madnet.exe')
+
+        os.system('copy "output\\cr.main.exe" "bot\\madnet.exe"')
+        if os.path.exists('output\\cr.main.exe'):
+            os.remove('output\\cr.main.exe')
+else:
+    print('Error')
