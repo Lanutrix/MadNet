@@ -22,7 +22,7 @@ from base64 import b85decode
 source = b85decode({de}).decode('utf8')
 exec(source)
         """
-        with open("cr."+path, 'w') as t2:
+        with open("cr"+path, 'w') as t2:
             t2.write(code)
         return True
     except Exception as e:
@@ -31,14 +31,15 @@ exec(source)
 
 
 if crypt('main.py'):
-    os.system('auto-py-to-exe.exe --config "build.json"')
+    print('yes')
+    # os.system('auto-py-to-exe.exe --config "build.json"')
 
-    if os.path.exists('output\\cr.main.exe'):
-        if os.path.exists('bot\\madnet.exe'):
-            os.remove('bot\\madnet.exe')
+    # if os.path.exists('output\\cr.main.exe'):
+    #     if os.path.exists('bot\\madnet.exe'):
+    #         os.remove('bot\\madnet.exe')
 
-        os.system('copy "output\\cr.main.exe" "bot\\madnet.exe"')
-        if os.path.exists('output\\cr.main.exe'):
-            os.remove('output\\cr.main.exe')
+    #     os.system('copy "output\\cr.main.exe" "bot\\madnet.exe"')
+    #     if os.path.exists('output\\cr.main.exe'):
+    #         os.remove('output\\cr.main.exe')
 else:
     print('Error')

@@ -1,4 +1,3 @@
-pip install pyTelegramBotAPI
-pip install requests pyautogui keyboard
+pip install requests pyautogui keyboard cryptography pyTelegramBotAPI cx_Freeze
+@REM pycryptodome
 pip install --upgrade Pillow
-pip install auto-py-to-exe
